@@ -17,6 +17,12 @@ Text snapshot 2:
     Un traductor de línea de comandos puede ser muy útil para no depender del navegador.
     >> 
 
+Text snapshot 3: precede letter `p` to play pronunciation, a single `p` play the last translation.
+
+    >> p says
+    dice
+    >> 
+
 Requirements
 ============
 - libreadline 6.2+, in Debian ``sudo apt-get install libreadline6-dev``
