@@ -119,34 +119,65 @@ void print_words(const vector<string> &words)
     cout << endl << endl;
 }
 
-void print_adjective(const char *text)
+bool print_adjective(const char *text)
 {
     string preffix = "[\"adjective\",[";
     vector<string> words = extract(text, preffix);
-    if (words.size() > 0) {
-        cout << "adjective:\n----------\n";
-        print_words(words);
-    }
+    if (words.size() == 0)
+        return false;
+
+    cout << "adjective:\n----------\n";
+    print_words(words);
+
+    return true;
 }
 
-void print_verb(const char *text)
+bool print_verb(const char *text)
 {
     string preffix = "[\"verb\",[";
     vector<string> words = extract(text, preffix);
-    if (words.size() > 0) {
-        cout << "verb:\n-----\n";
-        print_words(words);
-    }
+    if (words.size() == 0)
+        return false;
+
+    cout << "verb:\n-----\n";
+    print_words(words);
+    return true;
 }
 
-void print_noun(const char *text)
+bool print_adverb(const char *text)
+{
+    string preffix = "[\"adverb\",[";
+    vector<string> words = extract(text, preffix);
+    if (words.size() == 0)
+        return false;
+
+    cout << "adverb:\n-------\n";
+    print_words(words);
+    return true;
+}
+
+bool print_noun(const char *text)
 {
     string preffix = "[\"noun\",[";
     vector<string> words = extract(text, preffix);
-    if (words.size() > 0) {
-        cout << "noun:\n-----\n";
-        print_words(words);
-    }
+    if (words.size() == 0)
+        return false;
+
+    cout << "noun:\n-----\n";
+    print_words(words);
+    return true;
+}
+
+bool print_pronoun(const char *text)
+{
+    string preffix = "[\"pronoun\",[";
+    vector<string> words = extract(text, preffix);
+    if (words.size() == 0)
+        return false;
+
+    cout << "pronoun:\n--------\n";
+    print_words(words);
+    return true;
 }
 
 //FILE_MP3="/home/data/pronunciations/$word.mp3";
@@ -170,11 +201,13 @@ int main(int argc, char *argv[])
     string last;
     while (true) {
         input = readline(prompt);
+        rl_clear_screen(0, 0);
+        printf("\n");
         if (!input)
             break;
         add_history(input);
         string text(trim(input));
-        bool play_sound = text[0] == 'p' && text[1] == ' ';
+        //bool play_sound = text[0] == 'p' && text[1] == ' ';
         for (int i = 0; i < int(text.length()); i++)
             if (text[i] == ' ')
                 text[i] = '+';
@@ -182,16 +215,33 @@ int main(int argc, char *argv[])
         String ans;
         init_string(&ans);
         string url = BASE_URL + text + LANG_OPTIONS;
+        //cout << url << endl;
         curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0");
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ans);
         curl_easy_perform(curl);
 
-        print_verb(ans.str);
-        print_noun(ans.str);
-        print_adjective(ans.str);
+        //printf(ans.str);
+        bool verb = print_verb(ans.str);
+        bool adverb = print_adverb(ans.str);
+        bool noun = print_noun(ans.str);
+        bool pronoun = print_pronoun(ans.str);
+        bool adjective = print_adjective(ans.str);
 
+        // Sentence translation?
+        if (!(verb || adverb || noun || pronoun || adjective)) {
+            int length = strlen(ans.str);
+            int pos = 0;
+            while (pos < length && ans.str[pos] != '"')
+                pos++;
+
+            pos++;
+            while (pos < length && ans.str[pos] != '"')
+                putchar(ans.str[pos++]);
+
+            printf("\n");
+        }
         free(input);
     }
     return 0;
