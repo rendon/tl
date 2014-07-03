@@ -3,14 +3,14 @@
 #include <cstdlib>
 #include <cstring>
 #include <algorithm>
-
+#include <wordexp.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
 #include <curl/curl.h>
 using namespace std;
-
-const string PRONUNCIATION_DIRECTORY = "/home/rendon/.pronunciations";
+const char* USER_AGENT = "Mozilla/5.0";
+const string PRONUNCIATION_DIRECTORY = "~/.pronunciations";
 const string URL4AUDIO = "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=";
 const string BASE_URL = "http://translate.google.com/translate_a/t?client=t&text=";
 const string LANG_OPTIONS = "&sl=en&tl=es";
@@ -217,12 +217,20 @@ bool print_pronoun(const char *text)
 
 void play(string text)
 {
-    string file_name = PRONUNCIATION_DIRECTORY + "/" + text + ".mp3";
-    string command = "mplayer " + file_name + " > /dev/null 2>&1 &";
+    wordexp_t exp_result;
+    wordexp(PRONUNCIATION_DIRECTORY.c_str(), &exp_result, 0);
+    string dir(exp_result.we_wordv[0]);
+    // Create directory if not exists
+    string command = "mkdir -p " + dir;
+    system(command.c_str());
+
+    string file_name = dir + "/" + text + ".mp3";
+    command = "mplayer " + file_name + " > /dev/null 2>&1 &";
 
     // Test if file already exist
     FILE *mp3_file = fopen(file_name.c_str(), "r");
     CURL *curl = curl_easy_init();
+
     // If file exists, just play it.
     if (mp3_file != NULL) {
         fclose(mp3_file);
@@ -232,7 +240,7 @@ void play(string text)
         Audio mp3;
         init_audio(&mp3);
         string url = URL4AUDIO + text;
-        curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0");
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, USER_AGENT);
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_mp3);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &mp3);
@@ -296,7 +304,7 @@ int main(int argc, char *argv[])
         String ans;
         init_string(&ans);
         string url = BASE_URL + text + LANG_OPTIONS;
-        curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0");
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, USER_AGENT);
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ans);
