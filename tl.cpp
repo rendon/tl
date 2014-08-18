@@ -14,6 +14,10 @@ const string PRONUNCIATION_DIRECTORY = "~/.pronunciations";
 const string URL4AUDIO = "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=";
 const string BASE_URL = "http://translate.google.com/translate_a/t?client=t&text=";
 const string LANG_OPTIONS = "&sl=en&tl=es";
+string last;
+
+CURL *curl;
+
 struct String {
     char *str;
     size_t length;
@@ -257,17 +261,96 @@ void play(string text)
     }
 }
 
+void translate(string text)
+{
+    // Parse command
+    bool play_sound = false;
+    if (text.length() == 1) {
+        if (text[0] == 'p') {
+            play_sound = true;
+            text = ""; 
+        }
+    } else if (text.length() > 1) {
+        if (text[0] == 'p' && text[1] == ' ') {
+            play_sound = true;
+            text = text.substr(2);
+        }
+    }
+
+    // Escape spaces
+    for (int i = 0; i < int(text.length()); i++)
+        if (text[i] == ' ')
+            text[i] = '+';
+
+    // Retrieve translations
+    String ans;
+    init_string(&ans);
+    string url = BASE_URL + text + LANG_OPTIONS;
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, USER_AGENT);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ans);
+    curl_easy_perform(curl);
+
+    // Find definitions
+    bool verb = print_verb(ans.str);
+    bool adverb = print_adverb(ans.str);
+    bool noun = print_noun(ans.str);
+    bool pronoun = print_pronoun(ans.str);
+    bool adjective = print_adjective(ans.str);
+
+    // Sentence translation?
+    if (!(verb || adverb || noun || pronoun || adjective)) {
+        int length = strlen(ans.str);
+        int pos = 0;
+        while (pos < length && ans.str[pos] != '"')
+            pos++;
+
+        pos++;
+        while (pos < length && ans.str[pos] != '"')
+            putchar(ans.str[pos++]);
+
+        printf("\n");
+    }
+
+    // Text To Speech
+    if (play_sound) {
+        if (text != "")
+            play(text);
+        else if (last != "")
+            play(last);
+    }
+
+    if (text != "")
+        last = text;
+}
+
+
 int main(int argc, char *argv[])
 {
     char prompt[] = ">> ";
     char *input;
-    CURL *curl = curl_easy_init();
+    curl = curl_easy_init();
     if (curl == NULL) {
         fprintf(stderr, "Curl couldn't be initiated.\n");
         exit(EXIT_FAILURE);
     }
 
-    string last;
+    if (argc > 1) {
+        string text = "";
+        for (int i = 1; i < argc; i++) {
+            int length = strlen(argv[i]);
+            for (int j = 0; j < length; j++) {
+                text += argv[i][j];
+            }
+
+            text += " ";
+        }
+
+        translate(text);
+        exit(0);
+    }
+
     while (true) {
         input = readline(prompt);
         if (!input) // Ctrl-D
@@ -281,67 +364,7 @@ int main(int argc, char *argv[])
         rl_clear_screen(0, 0);
         printf("\n");
 
-        // Parse command
-        bool play_sound = false;
-        if (text.length() == 1) {
-            if (text[0] == 'p') {
-                play_sound = true;
-                text = ""; 
-            }
-        } else if (text.length() > 1) {
-            if (text[0] == 'p' && text[1] == ' ') {
-                play_sound = true;
-                text = text.substr(2);
-            }
-        }
-
-        // Escape spaces
-        for (int i = 0; i < int(text.length()); i++)
-            if (text[i] == ' ')
-                text[i] = '+';
-
-        // Retrieve translations
-        String ans;
-        init_string(&ans);
-        string url = BASE_URL + text + LANG_OPTIONS;
-        curl_easy_setopt(curl, CURLOPT_USERAGENT, USER_AGENT);
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ans);
-        curl_easy_perform(curl);
-
-        // Find definitions
-        bool verb = print_verb(ans.str);
-        bool adverb = print_adverb(ans.str);
-        bool noun = print_noun(ans.str);
-        bool pronoun = print_pronoun(ans.str);
-        bool adjective = print_adjective(ans.str);
-
-        // Sentence translation?
-        if (!(verb || adverb || noun || pronoun || adjective)) {
-            int length = strlen(ans.str);
-            int pos = 0;
-            while (pos < length && ans.str[pos] != '"')
-                pos++;
-
-            pos++;
-            while (pos < length && ans.str[pos] != '"')
-                putchar(ans.str[pos++]);
-
-            printf("\n");
-        }
-
-        // Text To Speech
-        if (play_sound) {
-            if (text != "")
-                play(text);
-            else if (last != "")
-                play(last);
-        }
-
-        if (text != "")
-            last = text;
-
+        translate(text);
         free(input);
     }
     return 0;
