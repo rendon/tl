@@ -1,8 +1,6 @@
 TransLator
 ==========
-**tl** is a simple command line translator that uses the Google translation
-service to translate words, text and play the pronunciations. **tl** has two
-modes, interactive and one-time translation.
+**tl** is a simple command line translator that uses the Google translation service to translate words, text and play the pronunciations. **tl** has two modes, interactive and one-time translation.
 
 Launch the interactive version if you need to translate many words or if you need the translator very often.
 
@@ -35,8 +33,7 @@ Text snapshot 3: Use `-p` option, followed by a space, and then your text to pla
 
 One-time translation
 =======================
-The interactive version of the translator can be a little cumbersome if all you
-want is to translate a single word.
+The interactive version of the translator can be a little cumbersome if all you want is to translate a single word.
 
 Example 1:
 
@@ -68,9 +65,7 @@ The text to translate is the concatenation of the parameters starting at the fir
 
 Configuration file
 ==================
-By default the source language is English (en) and the target language is
-Spanish (es). You can change this using the options `-s, --source` and `-t,
---target` or alternatively write this values in the file `~/.tlrc` as follows:
+By default the source language is English (en) and the target language is Spanish (es). You can change this using the options `-s, --source` and `-t, --target` or alternatively write this values in the file `~/.tlrc` as follows:
 
     source_language = fr
     target_language = en
