@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+require_relative '../lib/tli'
+params = {source: 'en', target: 'es', service: 'google'}
+text = ARGV.join(' ')
+#begin
+puts Tli.translate(text, params)
+#rescue
+#  STDERR.puts 'Oops! Something went wrong'
+#end
+

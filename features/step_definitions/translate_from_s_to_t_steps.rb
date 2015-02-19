@@ -3,9 +3,10 @@ Given /^I have the text "(.*?)"$/  do |text|
 end
 
 When /^I run the translator with S being "(.*?)" and T being "(.*?)"$/  do |source, target|
-  run 'tl --source #{source} --target #{target}'
+  #run "tli --source #{source} --target #{target} #{@text}"
+  run "tli #{@text}"
 end
 
-Then /^I should see "(.*?)"$/  do |output|
-  assert_passing_with output
+Then /^I should see "(.*?)" in the output$/  do |translation|
+  assert_passing_with translation
 end

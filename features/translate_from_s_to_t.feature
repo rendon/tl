@@ -8,7 +8,13 @@ Feature: Translate from language S to T
   text  will be  passed as  one or  more parameters  or typed  by the  user in
   interactive mode.
 
-  Scenario: Translate in non-interactive mode
-    Given I have the text "What is your name?"
-    When I run the translator with S being "en" and T being "es"
-    Then I should see "Cuál es tu nombre?"
+  Scenario Outline: Translate in non-interactive mode
+    Given I have the text "<text>"
+    When I run the translator with S being "<source>" and T being "<target>"
+    Then I should see "<translation>" in the output
+
+    Scenarios:
+      | text                | source  | target  | translation         |
+      | What is your name?  | en      | es      | Cuál es tu nombre?  |
+      | Take it easy!       | en      | es      | Tómalo con calma!   |
+
