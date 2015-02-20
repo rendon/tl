@@ -1,6 +1,8 @@
-TransLator
-==========
-**tl** is a simple command line translator that uses the Google translation service to translate words, text and play the pronunciations. **tl** has two modes, interactive and one-time translation.
+Translate it!
+=============
+[![Build Status](https://travis-ci.org/rendon/tli.svg?branch=master)](https://travis-ci.org/rendon/tli)
+
+**tli** is a simple command line translator that uses the Google translation service to translate words, text and play the pronunciations. **tl** has two modes, interactive and one-time translation.
 
 Launch the interactive version if you need to translate many words or if you need the translator very often.
 

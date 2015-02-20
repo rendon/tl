@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rest-client', '1.7.2'
 gem 'rake', '10.4.2'
+gem 'coveralls', require: false
 
 group :test do
   gem 'cucumber', '1.3.19'
