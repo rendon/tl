@@ -1,9 +1,7 @@
-require 'rest_client'
-require_relative 'translator'
-require_relative '../text_decoder'
-
-class GoogleTranslator < Translator
+require_relative 'dictionary'
+class GoogleDictionary < Dictionary
   API_URL = 'http://translate.google.com/translate_a/t'
+
   def get_langs
     { 'af'    => 'Afrikaans',   'sq'  => 'Albanian',        'ar'  => 'Arabic',
       'hy'    => 'Armenian',    'az'  => 'Azerbaijani',     'eu'  => 'Basque',
@@ -27,22 +25,42 @@ class GoogleTranslator < Translator
       'zh-TW' => 'Chinese, (Traditional)','zh-CN'=> 'Chinese, (Simplified)' }
   end
 
-  def translate(text, source, target)
+  def define(word, source, target)
     raise "Unknown language code '#{source}'" if !get_langs.include?(source)
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
-    response = RestClient.get(API_URL, params: {client: 'p', text: text, sl: source, tl: target})
+    response = RestClient.get(API_URL, params: {client: 'p', text: word, sl: source, tl: target})
     json = JSON.parse(TextDecoder.decode(response.to_s, target))
-    translation = ''
-    if json.include?('sentences')
-      json['sentences'].each do |entry|
-        if entry.include?('trans')
-          translation = entry['trans']
+    result = []
+    if json.include?('dict')
+      json['dict'].each do |item|
+        definition = {:class => item['pos'], entries: []}
+        item['entry'].each do |entry|
+          definition[:entries] << {word: entry['word'], score: (entry['score'] or 1e9)}
+        end
+        result << definition
+      end
+    elsif json.include?('sentences')
+      json['sentences'].each do |item|
+        if item.include?('trans')
+          definition = {:class => 'translation', entries: []}
+          definition[:entries] << {word: item['trans'], score: 0}
+          result << definition
           break
         end
       end
     end
-    translation
+    render result
+  end
+
+  private
+  def render(result)
+    output = ""
+    result.each do |entry|
+      output << "#{entry[:class]}\n#{'-' * entry[:class].length}\n"
+      entry[:entries].sort! {|x, y| x[:score] <=> y[:score]}
+      output << entry[:entries].map {|e| e[:word] }.join(', ') + "\n\n"
+    end
+    #puts output
+    output
   end
 end
-
-
