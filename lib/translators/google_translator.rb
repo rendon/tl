@@ -1,5 +1,6 @@
 require 'rest_client'
 require_relative 'translator'
+require_relative '../text_decoder'
 
 class GoogleTranslator < Translator
   API_URL = 'http://translate.google.com/translate_a/t'
@@ -29,9 +30,8 @@ class GoogleTranslator < Translator
   def translate(text, source, target)
     raise "Unknown language code '#{source}'" if !get_langs.include?(source)
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
-    result = RestClient.get(API_URL, params: {client: 'p', text: text, sl: source, tl: target})
-    data = result.to_s.force_encoding('iso-8859-1').encode('UTF-8')
-    json = JSON.parse(data)
+    response = RestClient.get(API_URL, params: {client: 'p', text: text, sl: source, tl: target})
+    json = JSON.parse(TextDecoder.decode(response.to_s, target))
     translation = ''
     json['sentences'].each do |entry|
       if entry.include?('trans')

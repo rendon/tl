@@ -14,7 +14,11 @@ Feature: Translate from language S to T
     Then I should see "<translation>" in the output
 
     Scenarios:
-      | text                | source  | target  | translation         |
-      | What is your name?  | en      | es      | Cuál es tu nombre?  |
-      | Take it easy!       | en      | es      | Tómalo con calma!   |
+      | text                    | source  | target  | translation         |
+      | What is your name?      | en      | es      | Cuál es tu nombre?  |
+      | Take it easy!           | en      | es      | Tómalo con calma!   |
+      | Que tengas un buen día. | es      | en      | Have a good day.    |
+      | Que tengas un buen día. | es      | ru      | Хорошего дня.       |
+      | See you soon.           | en      | es      | Hasta pronto.       |
+      | Mon ami.                | fr      | es      | Mi amigo.           |
 

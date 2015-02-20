@@ -1,10 +1,35 @@
 #!/usr/bin/env ruby
 require_relative '../lib/tli'
-params = {source: 'en', target: 'es', service: 'google'}
-text = ARGV.join(' ')
-#begin
-puts Tli.translate(text, params)
-#rescue
-#  STDERR.puts 'Oops! Something went wrong'
-#end
 
+OPTIONS = {
+  '--source'    => 'option_value',
+  '-s'          => 'option_value',
+  '--target'    => 'option_value',
+  '-t'          => 'option_value',
+  '--backend'   => 'option_value',
+  '-b'          => 'option_value',
+  '--play'      => 'option',
+  '-p'          => 'option'
+}
+
+
+length = ARGV.length
+params = Hash.new('')
+index = 0
+while index < length
+  arg = ARGV[index]
+  if OPTIONS.include?(arg)
+    if OPTIONS[arg] == 'option_value'
+      raise "#{arg} requires a value." if index + 1 >= length
+      params[arg] = ARGV[index+1]
+      index += 1
+    else
+      params[arg] = true
+    end
+  else
+    params[:text] << ' ' + arg
+  end
+  index += 1
+end
+
+puts Tli.translate(params[:text], params['--source'], params['--target'])

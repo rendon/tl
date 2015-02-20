@@ -25,20 +25,32 @@ describe GoogleTranslator do
 
     it 'should fail when source code is not supported' do
       expect {
-        GoogleTranslator.new.translate("text", 'English', 'es')
+        GoogleTranslator.new.translate('text', 'English', 'es')
       }.to raise_error
     end
 
     it 'should fail when target code is not supported' do
       expect {
-        GoogleTranslator.new.translate("text", 'en', 'Spanish')
+        GoogleTranslator.new.translate('text', 'en', 'Spanish')
       }.to raise_error
     end
 
     it 'translates from English to Spanish' do
       text = 'What is your name?'
       result = 'Cuál es tu nombre?'
-      expect(@translator.translate(text, "en", "es")).to include(result)
+      expect(@translator.translate(text, 'en', 'es')).to include(result)
+    end
+
+    it 'translates from Spanish to Russian' do
+      text = 'Que tengas un buen día.'
+      result = 'Хорошего дня.'
+      expect(@translator.translate(text, 'es', 'ru')).to include(result)
+    end
+
+    it 'translates from French to Spanish' do
+      text = 'Mon ami.'
+      result = 'Mi amigo.'
+      expect(@translator.translate(text, 'fr', 'es')).to include(result)
     end
   end
 end
