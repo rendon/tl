@@ -54,5 +54,13 @@ describe GoogleTranslator do
       result = 'Mi amigo.'
       expect(@translator.translate(text, 'fr', 'es')).to include(result)
     end
+
+    it 'translates from Spanish to Japanese' do
+      text = 'de vez en cuando'
+      result = '時折'
+      expect(@translator.translate(text, 'es', 'ja')).to include(result)
+    end
+
+
   end
 end

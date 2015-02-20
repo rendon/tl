@@ -24,5 +24,17 @@ describe Tli do
       expect(Tli).to receive(:translate).with('two books', 'en', 'es', 'google')
       Tli.invoke(%w{--source en --target es --service google two books})
     end
+
+    it 'fails if --source is not present' do
+      expect(Tli.invoke(%w{--target es --service google book})).not_to eq(0)
+    end
+
+    it 'fails if --target is not present' do
+      expect(Tli.invoke(%w{--source en --service google book})).not_to eq(0)
+    end
+
+    it 'fails if --service is not present' do
+      expect(Tli.invoke(%w{--source en --target es google book})).not_to eq(0)
+    end
   end
 end
