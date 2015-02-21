@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Tli do
+  before :each do
+    @fake_stdin = StringIO.new
+    @fake_stdout = StringIO.new
+    @fake_stderr = StringIO.new
+  end
   describe "#translate" do
     it 'responds to the #traslate method' do
       expect(Tli).to respond_to(:translate).with(4).arguments
@@ -26,15 +31,18 @@ describe Tli do
     end
 
     it 'fails if --source is not present' do
-      expect(Tli.invoke(%w{--target es --service google book})).not_to eq(0)
+      expect(Tli.invoke(%w{--target es --service google book},
+                        @fake_stdin, @fake_stdout, @fake_stderr)).not_to eq(0)
     end
 
     it 'fails if --target is not present' do
-      expect(Tli.invoke(%w{--source en --service google book})).not_to eq(0)
+      expect(Tli.invoke(%w{--source en --service google book},
+                       @fake_stdin, @fake_stdout, @fake_stderr)).not_to eq(0)
     end
 
     it 'fails if --service is not present' do
-      expect(Tli.invoke(%w{--source en --target es google book})).not_to eq(0)
+      expect(Tli.invoke(%w{--source en --target es google book},
+                       @fake_stdin, @fake_stdout, @fake_stderr)).not_to eq(0)
     end
   end
 end

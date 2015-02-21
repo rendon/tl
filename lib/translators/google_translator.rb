@@ -30,7 +30,8 @@ class GoogleTranslator < Translator
   def translate(text, source, target)
     raise "Unknown language code '#{source}'" if !get_langs.include?(source)
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
-    response = RestClient.get(API_URL, params: {client: 'p', text: text, sl: source, tl: target})
+    params = {client: 'p', text: text, sl: source, tl: target}
+    response = RestClient.get(API_URL, params: params)
     json = JSON.parse(TextDecoder.decode(response.to_s, target))
     translation = ''
     if json.include?('sentences')

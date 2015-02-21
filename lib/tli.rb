@@ -19,7 +19,7 @@ class Tli
     'google'  => GoogleDictionary.new
   }
 
-  def self.invoke(args)
+  def self.invoke(args, stdin = $stdin, stdout = $stdout, stderr = $stderr)
     length = args.length
     params = Hash.new('')
     params[:service] = 'google'
@@ -44,14 +44,14 @@ class Tli
     end
 
     if params['--help'] == :on
-      puts Help.help
+      stdout.puts Help.help
       return 0
     end
 
     exit_code = 0
     OPTIONS.each do |key, value|
       if value == :key_value && params[key].empty?
-        STDERR.puts "Please provide a value for #{key}"
+        stderr.puts "Please provide a value for #{key}"
         exit_code = 1
       end
     end
@@ -59,9 +59,15 @@ class Tli
     return exit_code if exit_code > 0
 
     if count_words > 1
-      puts translate(params[:text].join(' '), params['--source'], params['--target'], params[:service])
+      stdout.puts translate(params[:text].join(' '),
+                            params['--source'],
+                            params['--target'],
+                            params[:service])
     else
-      puts define(params[:text].join(' '), params['--source'], params['--target'], params[:service])
+      stdout.puts define(params[:text].join(' '),
+                         params['--source'],
+                         params['--target'],
+                         params[:service])
     end
     return exit_code
   end

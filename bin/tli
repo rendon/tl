@@ -1,3 +1,11 @@
 #!/usr/bin/env ruby
 require_relative '../lib/tli'
-exit(Tli.invoke(ARGV))
+stdin = StringIO.new
+stdout = StringIO.new
+stderr = StringIO.new
+exit_code = Tli.invoke(ARGV, stdin, stdout, stderr)
+
+stdout.rewind
+STDOUT.puts stdout.read
+stderr.rewind
+STDERR.puts stderr.read
