@@ -5,6 +5,12 @@ require_relative 'help'
 
 class Tli
   include Help
+  DEFAULTS = {
+    service: 'google',
+    source: 'en',
+    target: 'es'
+  }
+
   OPTIONS = {
     '--source'    => :key_value,
     '--target'    => :key_value,
@@ -23,50 +29,25 @@ class Tli
 
   def invoke(args, stdin = $stdin, stdout = $stdout, stderr = $stderr)
     length = args.length
-    params = Hash.new('')
-    params[:service] = 'google'
-    words = []
-    count_words = 0
-    index = 0
-    while index < length
-      arg = args[index]
-      if OPTIONS.include?(arg)
-        if OPTIONS[arg] == :key_value
-          raise "#{arg} requires a value." if index + 1 >= length
-          params[arg] = args[index+1]
-          index += 1
-        else
-          params[arg] = :on
-        end
-      else
-        words << arg
-      end
-      index += 1
-    end
+    params = parse_options(args)
 
     if params['--help'] == :on
       stdout.puts help
-      return 0
+      return "bye"
     end
 
-    exit_code = 0
-    OPTIONS.each do |key, value|
-      if value == :key_value && params[key].empty?
-        stderr.puts "Please provide a value for #{key}"
-        exit_code = 1
-      end
-    end
-    return exit_code if exit_code > 0
+    params['--source']  = DEFAULTS[:source]   if params['--source'].empty?
+    params['--target']  = DEFAULTS[:target]   if params['--target'].empty?
+    params['--service'] = DEFAULTS[:service]  if params['--service'].empty?
 
-    if !words.empty?
-      stdout.puts process_input(words, params)
+    if !params[:words].empty?
+      stdout.puts process_input(params)
     else
       while buf = Readline.readline('> ', true)
-        words = buf.split(/\s+/)
-        stdout.puts process_input(words, params)
+        params[:words] = buf.split(/\s+/)
+        stdout.puts process_input(params)
       end
     end
-    return exit_code
   end
 
   def translate(text, source, target, service)
@@ -78,17 +59,40 @@ class Tli
   end
 
   private
-    def process_input(words, params)
-      if words.length > 1
-        translate(words.join(' '),
+    def parse_options(args)
+      length = args.length
+      params = Hash.new('')
+      params[:words] = []
+      index = 0
+      while index < length
+        arg = args[index]
+        if OPTIONS.include?(arg)
+          if OPTIONS[arg] == :key_value
+            raise "#{arg} requires a value" if index + 1 >= length
+            params[arg] = args[index+1]
+            index += 1
+          else
+            params[arg] = :on
+          end
+        else
+          params[:words] << arg
+        end
+        index += 1
+      end
+      params
+    end
+
+    def process_input(params)
+      if params[:words].length > 1
+        translate(params[:words].join(' '),
                   params['--source'],
                   params['--target'],
-                  params[:service])
+                  params['--service'])
       else
-        define(words.join(' '),
+        define(params[:words].join(' '),
                params['--source'],
                params['--target'],
-               params[:service])
+               params['--service'])
       end
     end
 end

@@ -1,3 +1,9 @@
 #!/usr/bin/env ruby
 require_relative '../lib/tli'
-exit_code = Tli.new.invoke(ARGV)
+begin
+  Tli.new.invoke(ARGV)
+  exit(0)
+rescue => e
+  STDERR.puts e.message
+  exit(1)
+end

@@ -27,23 +27,30 @@ describe Tli do
     end
 
     it 'uses a translator for multiple word text' do
-      expect(@tli).to receive(:translate).with('two books', 'en', 'es', 'google')
-      @tli.invoke(%w{--source en --target es --service google two books})
+      expect(@tli).to receive(:translate).with('a book', 'en', 'es', 'google')
+      @tli.invoke(%w{--source en --target es --service google a book})
     end
 
-    it 'fails if --source is not present' do
-      expect(@tli.invoke(%w{--target es --service google book},
-                        @fake_stdin, @fake_stdout, @fake_stderr)).not_to eq(0)
+    it 'uses default source if --source is not present' do
+      expect(@tli).to receive(:translate).with('a book', 'en', 'es', 'google')
+      @tli.invoke(%w{--target es --service google a book},
+                  @fake_stdin, @fake_stdout, @fake_stderr)
     end
 
-    it 'fails if --target is not present' do
-      expect(@tli.invoke(%w{--source en --service google book},
-                       @fake_stdin, @fake_stdout, @fake_stderr)).not_to eq(0)
+    it 'uses default target if --target is not present' do
+      expect(@tli).to receive(:define).with('book', 'en', 'es', 'google')
+      @tli.invoke(%w{--source en --service google book},
+                  @fake_stdin, @fake_stdout, @fake_stderr)
     end
 
-    it 'fails if --service is not present' do
-      expect(@tli.invoke(%w{--source en --target es google book},
-                       @fake_stdin, @fake_stdout, @fake_stderr)).not_to eq(0)
+    it 'uses default service if --service is not present' do
+      expect(@tli).to receive(:define).with('book', 'en', 'es', 'google')
+      @tli.invoke(%w{--source en --target es book},
+                  @fake_stdin, @fake_stdout, @fake_stderr)
+    end
+
+    it 'fails if the options syntax is not correct' do
+      expect { @tli.invoke(%w{--source en --target}) }.to raise_error
     end
   end
 end
