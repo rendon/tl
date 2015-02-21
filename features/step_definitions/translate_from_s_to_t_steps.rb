@@ -18,6 +18,6 @@ When /^I enter "(.*?)"$/ do |text|
   type text
 end
 
-Then /^the output should contain "(.*?)">$/ do |translation|
+Then /^the program should output "(.*?)"$/ do |translation|
   assert_partial_output_interactive(translation)
 end

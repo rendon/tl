@@ -26,7 +26,7 @@ Feature: Translate from language S to T
   Scenario Outline: Translate in interactive mode
     Given I started the translator with source "<source>", target "<target>", and no text
     When I enter "<text>"
-    Then the output should contain "<translation">
+    Then the program should output "<translation>"
 
     Scenarios:
       | text                    | source  | target  | translation         |
