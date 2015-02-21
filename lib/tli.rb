@@ -1,11 +1,14 @@
-require_relative 'translators/google_translator.rb'
-require_relative 'dictionaries/google_dictionary.rb'
+require_relative 'translators/google_translator'
+require_relative 'dictionaries/google_dictionary'
+require_relative 'help'
+
 class Tli
   OPTIONS = {
-    '--source'    => 'option_value',
-    '--target'    => 'option_value',
-    '--service'   => 'option_value',
-    '--play'      => 'option'
+    '--source'    => :key_value,
+    '--target'    => :key_value,
+    '--service'   => :key_value,
+    '--play'      => :flag,
+    '--help'      => :flag
   }
 
   TRANSLATORS = {
@@ -26,12 +29,12 @@ class Tli
     while index < length
       arg = args[index]
       if OPTIONS.include?(arg)
-        if OPTIONS[arg] == 'option_value'
+        if OPTIONS[arg] == :key_value
           raise "#{arg} requires a value." if index + 1 >= length
           params[arg] = args[index+1]
           index += 1
         else
-          params[arg] = true
+          params[arg] = :on
         end
       else
         params[:text] << arg
@@ -40,9 +43,14 @@ class Tli
       index += 1
     end
 
+    if params['--help'] == :on
+      puts Help.help
+      return 0
+    end
+
     exit_code = 0
     OPTIONS.each do |key, value|
-      if value == 'option_value' && params[key].empty?
+      if value == :key_value && params[key].empty?
         STDERR.puts "Please provide a value for #{key}"
         exit_code = 1
       end
