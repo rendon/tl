@@ -1,5 +1,5 @@
 module Help
-  def self.help
+  def help
     %{Usage: tli [options] --source <lang code> --target <lang code> --service <service id> [text]
 
     --source      Specify the language code of the text to translate, e.g. en, es, fr, ja, etc.

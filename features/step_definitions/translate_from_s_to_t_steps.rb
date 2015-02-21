@@ -9,3 +9,15 @@ end
 Then /^I should see "(.*?)" in the output$/  do |translation|
   assert_passing_with translation
 end
+
+Given /^I started the translator with source "(.*?)", target "(.*?)", and no text$/ do |source, target|
+  run_interactive "tli --source #{source} --target #{target} --service google"
+end
+
+When /^I enter "(.*?)"$/ do |text|
+  type text
+end
+
+Then /^the output should contain "(.*?)">$/ do |translation|
+  assert_partial_output_interactive(translation)
+end

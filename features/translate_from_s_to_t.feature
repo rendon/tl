@@ -22,3 +22,17 @@ Feature: Translate from language S to T
       | See you soon.           | en      | es      | Hasta pronto.       |
       | Mon ami.                | fr      | es      | Mi amigo.           |
 
+
+  Scenario Outline: Translate in interactive mode
+    Given I started the translator with source "<source>", target "<target>", and no text
+    When I enter "<text>"
+    Then the output should contain "<translation">
+
+    Scenarios:
+      | text                    | source  | target  | translation         |
+      | What is your name?      | en      | es      | Cuál es tu nombre?  |
+      | Take it easy!           | en      | es      | Tómalo con calma!   |
+      | Que tengas un buen día. | es      | en      | Have a good day.    |
+      | Que tengas un buen día. | es      | ru      | Хорошего дня.       |
+      | See you soon.           | en      | es      | Hasta pronto.       |
+      | Mon ami.                | fr      | es      | Mi amigo.           |

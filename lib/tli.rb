@@ -1,8 +1,10 @@
+require 'readline'
 require_relative 'translators/google_translator'
 require_relative 'dictionaries/google_dictionary'
 require_relative 'help'
 
 class Tli
+  include Help
   OPTIONS = {
     '--source'    => :key_value,
     '--target'    => :key_value,
@@ -19,11 +21,11 @@ class Tli
     'google'  => GoogleDictionary.new
   }
 
-  def self.invoke(args, stdin = $stdin, stdout = $stdout, stderr = $stderr)
+  def invoke(args, stdin = $stdin, stdout = $stdout, stderr = $stderr)
     length = args.length
     params = Hash.new('')
     params[:service] = 'google'
-    params[:text] = []
+    words = []
     count_words = 0
     index = 0
     while index < length
@@ -37,14 +39,13 @@ class Tli
           params[arg] = :on
         end
       else
-        params[:text] << arg
-        count_words += 1
+        words << arg
       end
       index += 1
     end
 
     if params['--help'] == :on
-      stdout.puts Help.help
+      stdout.puts help
       return 0
     end
 
@@ -55,28 +56,39 @@ class Tli
         exit_code = 1
       end
     end
-
     return exit_code if exit_code > 0
 
-    if count_words > 1
-      stdout.puts translate(params[:text].join(' '),
-                            params['--source'],
-                            params['--target'],
-                            params[:service])
+    if !words.empty?
+      stdout.puts process_input(words, params)
     else
-      stdout.puts define(params[:text].join(' '),
-                         params['--source'],
-                         params['--target'],
-                         params[:service])
+      while buf = Readline.readline('> ', true)
+        words = buf.split(/\s+/)
+        stdout.puts process_input(words, params)
+      end
     end
     return exit_code
   end
 
-  def self.translate(text, source, target, service)
+  def translate(text, source, target, service)
     TRANSLATORS[service].translate(text, source, target)
   end
 
-  def self.define(word, source, target, service)
+  def define(word, source, target, service)
     DICTIONARIES[service].define(word, source, target)
   end
+
+  private
+    def process_input(words, params)
+      if words.length > 1
+        translate(words.join(' '),
+                  params['--source'],
+                  params['--target'],
+                  params[:service])
+      else
+        define(words.join(' '),
+               params['--source'],
+               params['--target'],
+               params[:service])
+      end
+    end
 end
