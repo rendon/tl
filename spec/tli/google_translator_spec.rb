@@ -7,7 +7,7 @@ describe GoogleTranslator do
   end
 
   describe '#get_langs' do
-    it 'should respond to the #get_langs method' do
+    it 'responds to the #get_langs method' do
       expect(@translator).to respond_to(:get_langs)
     end
 
@@ -20,8 +20,7 @@ describe GoogleTranslator do
   end
 
   describe '#translate' do
-
-    it 'should respond to the #translate method' do
+    it 'responds to the #translate method' do
       expect(@translator).to respond_to(:translate).with(3).arguments
     end
 
@@ -61,6 +60,15 @@ describe GoogleTranslator do
       expect(@translator.translate(text, 'es', 'ja')).to include(result)
     end
 
+    it 'calls #play_pronunciation when the "play" argument is true' do
+      expect(@translator).to receive(:play_pronunciation)
+      @translator.translate('hi', 'en', 'es', true)
+    end
+  end
 
+  describe '#play_pronunciation' do
+    it 'responds to the #play_pronunciation method' do
+      expect(@translator).to respond_to(:play_pronunciation).with(1).argument
+    end
   end
 end

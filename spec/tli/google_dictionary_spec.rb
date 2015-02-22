@@ -6,6 +6,20 @@ describe GoogleDictionary do
     @dictionary = GoogleDictionary.new
   end
 
+  describe "#get_langs" do
+    it 'should respond to the #get_langs method' do
+      expect(@dictionary).to respond_to(:get_langs)
+    end
+
+    it 'should contain "en" key' do
+      expect(@dictionary.get_langs).to include('en')
+    end
+
+    it 'should contain "es" key' do
+      expect(@dictionary.get_langs).to include('es')
+    end
+  end
+
   describe "#define" do
     it 'should respond to the #define method' do
       expect(@dictionary).to respond_to(:define).with(3).arguments
@@ -89,19 +103,15 @@ describe GoogleDictionary do
       expect(definition).to include('aloud')
     end
 
+    it 'calls #play_pronunciation when the "play" argument is true' do
+      expect(@dictionary).to receive(:play_pronunciation)
+      @dictionary.define('hi', 'en', 'es', true)
+    end
   end
 
-  describe "#get_langs" do
-    it 'should respond to the #get_langs method' do
-      expect(@dictionary).to respond_to(:get_langs)
-    end
-
-    it 'should contain "en" key' do
-      expect(@dictionary.get_langs).to include('en')
-    end
-
-    it 'should contain "es" key' do
-      expect(@dictionary.get_langs).to include('es')
+  describe '#play_pronunciation' do
+    it 'responds to the #play_pronunciation method' do
+      expect(@dictionary).to respond_to(:play_pronunciation).with(1).argument
     end
   end
 end

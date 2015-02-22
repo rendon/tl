@@ -50,12 +50,12 @@ class Tli
     end
   end
 
-  def translate(text, source, target, service)
-    TRANSLATORS[service].translate(text, source, target)
+  def translate(text, source, target, service, play = false)
+    TRANSLATORS[service].translate(text, source, target, play)
   end
 
-  def define(word, source, target, service)
-    DICTIONARIES[service].define(word, source, target)
+  def define(word, source, target, service, play = false)
+    DICTIONARIES[service].define(word, source, target, play)
   end
 
   private
@@ -87,12 +87,14 @@ class Tli
         translate(params[:words].join(' '),
                   params['--source'],
                   params['--target'],
-                  params['--service'])
+                  params['--service'],
+                  params['--play'] == :on)
       else
         define(params[:words].join(' '),
                params['--source'],
                params['--target'],
-               params['--service'])
+               params['--service'],
+               params['--play'] == :on)
       end
     end
 end

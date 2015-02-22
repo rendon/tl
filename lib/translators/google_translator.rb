@@ -1,9 +1,16 @@
 require 'rest_client'
 require_relative 'translator'
 require_relative '../text_decoder'
+require_relative '../player'
+require_relative '../playable'
+require_relative '../string_util'
+require_relative '../google'
 
 class GoogleTranslator < Translator
-  API_URL = 'http://translate.google.com/translate_a/t'
+  include Playable
+  include Google
+
+
   def get_langs
     { 'af'    => 'Afrikaans',   'sq'  => 'Albanian',        'ar'  => 'Arabic',
       'hy'    => 'Armenian',    'az'  => 'Azerbaijani',     'eu'  => 'Basque',
@@ -27,11 +34,11 @@ class GoogleTranslator < Translator
       'zh-TW' => 'Chinese, (Traditional)','zh-CN'=> 'Chinese, (Simplified)' }
   end
 
-  def translate(text, source, target)
+  def translate(text, source, target, play = false)
     raise "Unknown language code '#{source}'" if !get_langs.include?(source)
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
     params = {client: 'p', text: text, sl: source, tl: target}
-    response = RestClient.get(API_URL, params: params)
+    response = RestClient.get(TEXT_API_URL, params: params)
     json = JSON.parse(TextDecoder.decode(response.to_s, target))
     translation = ''
     if json.include?('sentences')
@@ -42,8 +49,11 @@ class GoogleTranslator < Translator
         end
       end
     end
+    if play
+      file_name = get_pronunciation(text, source, target)
+      play_pronunciation(file_name)
+    end
     translation
   end
 end
-
 

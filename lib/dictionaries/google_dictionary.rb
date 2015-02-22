@@ -1,5 +1,10 @@
 require_relative 'dictionary'
+require_relative '../text_decoder'
+require_relative '../playable'
+require_relative '../google'
 class GoogleDictionary < Dictionary
+  include Playable
+  include Google
   API_URL = 'http://translate.google.com/translate_a/t'
 
   def get_langs
@@ -25,7 +30,7 @@ class GoogleDictionary < Dictionary
       'zh-TW' => 'Chinese, (Traditional)','zh-CN'=> 'Chinese, (Simplified)' }
   end
 
-  def define(word, source, target)
+  def define(word, source, target, play = false)
     raise "Unknown language code '#{source}'" if !get_langs.include?(source)
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
     params = {client: 'p', text: word, sl: source, tl: target}
@@ -49,6 +54,10 @@ class GoogleDictionary < Dictionary
           break
         end
       end
+    end
+    if play
+      file_name = get_pronunciation(word, source, target)
+      play_pronunciation(file_name)
     end
     render result
   end
