@@ -27,6 +27,10 @@ class Tli
     'google'  => GoogleDictionary.new
   }
 
+  def initialize(readline = Readline)
+      @readline = readline
+  end
+
   def invoke(args, stdin = $stdin, stdout = $stdout, stderr = $stderr)
     length = args.length
     params = parse_options(args)
@@ -43,9 +47,10 @@ class Tli
     if !params[:words].empty?
       stdout.puts process_input(params)
     else
-      while buf = Readline.readline('> ', true)
+      while buf = @readline.readline('> ', true)
         params[:words] = buf.split(/\s+/)
-        stdout.puts process_input(params)
+        result = process_input(params)
+        stdout.puts result if !result.empty?
       end
     end
   end
@@ -83,18 +88,20 @@ class Tli
     end
 
     def process_input(params)
-      if params[:words].length > 1
-        translate(params[:words].join(' '),
-                  params['--source'],
-                  params['--target'],
-                  params['--service'],
-                  params['--play'] == :on)
-      else
-        define(params[:words].join(' '),
-               params['--source'],
-               params['--target'],
-               params['--service'],
-               params['--play'] == :on)
+      result = ''
+      if params[:words].length == 1
+        result = define(params[:words].join(' '),
+                        params['--source'],
+                        params['--target'],
+                        params['--service'],
+                        params['--play'] == :on)
+      elsif params[:words].length > 1
+        result = translate(params[:words].join(' '),
+                           params['--source'],
+                           params['--target'],
+                           params['--service'],
+                           params['--play'] == :on)
       end
+      result
     end
 end

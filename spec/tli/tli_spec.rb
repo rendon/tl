@@ -8,6 +8,7 @@ describe Tli do
     @tli = Tli.new
   end
   describe "#translate" do
+    #before { skip }
     it 'responds to the #traslate method' do
       expect(@tli).to respond_to(:translate).with(4).arguments
     end
@@ -38,6 +39,7 @@ describe Tli do
   end
 
   describe "#define" do
+    #before { skip }
     it 'responds to the #define method' do
       expect(@tli).to respond_to(:define).with(4).arguments
     end
@@ -59,5 +61,15 @@ describe Tli do
                   @fake_stdin, @fake_stdout, @fake_stderr)
     end
 
+  end
+
+  describe '#invoke' do
+    it 'does not process empty strings in interactive mode' do
+      readline = double('readline')
+      allow(readline).to receive(:readline).and_return('', nil)
+      @interactive_tli = Tli.new(readline)
+      expect(@fake_stdout).not_to receive(:puts)
+      @interactive_tli.invoke([], @fake_stdin, @fake_stdout, @fake_stderr)
+    end
   end
 end
