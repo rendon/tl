@@ -4,7 +4,7 @@ module Google
 
   def get_pronunciation(text, source, target)
     id = StringUtil.translation_id(text, source, target, 'google')
-    file_name = "#{Dir.home}/.pronunciations/#{id}.mp3"
+    file_name = "#{Application.app_dir}/pronunciations/#{id}.mp3"
 
     if !File.exists?(file_name)
       File.open(file_name, "w") do |f|
