@@ -6,4 +6,5 @@ TODO.md
 tmp/
 coverage/
 tli-*
-app_dir/
+app_dir/db/
+app_dir/pronunciations/

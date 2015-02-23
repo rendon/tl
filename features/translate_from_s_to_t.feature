@@ -45,8 +45,8 @@ Feature: Translate from language S to T
     And I should see "♬" in the output
 
     Scenarios:
-      | text                    | source  | target  | translation         |
-      | What is your name?      | en      | es      | Cuál es tu nombre?  |
+      | text      | source  | target  | translation   | 
+      | book      | en      | es      | libro         |
 
   Scenario Outline: Play translation in interactive mode
     Given I started the translator with the --play option, source "<source>", target "<target>", and no text
