@@ -39,7 +39,7 @@ class Tli
 
     if params[:help] == :on
       stdout.puts help
-      return "bye"
+      return
     end
 
     params[:source]  = DEFAULTS[:source]   if params[:source].empty?

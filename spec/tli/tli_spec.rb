@@ -71,5 +71,20 @@ describe Tli do
       expect(@fake_stdout).not_to receive(:puts)
       @interactive_tli.invoke([], @fake_stdin, @fake_stdout, @fake_stderr)
     end
+
+    it 'displays help' do
+      expect(@fake_stdout).to receive(:puts).with(@tli.help)
+      @tli.invoke(%w{--help}, @fake_stdin, @fake_stdout, @fake_stderr)
+    end
+
+  end
+
+  describe 'cache google translations' do
+    it 'check if the translation is in the local database' do
+      expect(Translation).to receive(:find_by)
+      @tli.invoke(%w{--cache_results --source en --target es --service google book},
+                 @fake_stdin, @fake_stdout, @fake_stderr)
+    end
+
   end
 end

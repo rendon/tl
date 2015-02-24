@@ -5,7 +5,4 @@ ActiveRecord::Base.establish_connection(adapter: 'sqlite3',
 
 ActiveRecord::Migrator.migrate('db/migrate')
 class Translation < ActiveRecord::Base
-  def self.find_google_translation(text, source, target)
-    Translation.where(text: text, source: source, target: target, service: 'google').first
-  end
 end
