@@ -6,32 +6,27 @@ describe GoogleDictionary do
     @dictionary = GoogleDictionary.new
   end
 
+  describe '#provide_tts?' do
+    it { expect(@dictionary).to respond_to(:provide_tts?) }
+    it { expect(@dictionary.provide_tts?).to be true }
+  end
+
   describe "#get_langs" do
-    it 'should respond to the #get_langs method' do
-      expect(@dictionary).to respond_to(:get_langs)
-    end
-
-    it 'should contain "en" key' do
-      expect(@dictionary.get_langs).to include('en')
-    end
-
-    it 'should contain "es" key' do
-      expect(@dictionary.get_langs).to include('es')
-    end
+    it { expect(@dictionary).to respond_to(:get_langs) }
+    it { expect(@dictionary.get_langs).to include('en') }
+    it { expect(@dictionary.get_langs).to include('es') }
   end
 
   describe "#define" do
-    it 'should respond to the #define method' do
-      expect(@dictionary).to respond_to(:define).with(3).arguments
-    end
+    it { expect(@dictionary).to respond_to(:define).with(3).arguments }
 
-    it 'should fail when source code is not supported' do
+    it 'fails when source code is not supported' do
       expect {
         @dictionary.define('text', 'English', 'es')
       }.to raise_error
     end
 
-    it 'should fail when target code is not supported' do
+    it 'fails when target code is not supported' do
       expect {
         @dictionary.define('text', 'en', 'Spanish')
       }.to raise_error
@@ -102,16 +97,6 @@ describe GoogleDictionary do
       expect(definition).to include('loud')
       expect(definition).to include('aloud')
     end
-
-    it 'calls #play_pronunciation when the "play" argument is true' do
-      expect(@dictionary).to receive(:play_pronunciation)
-      @dictionary.define('hi', 'en', 'es', true)
-    end
   end
 
-  describe '#play_pronunciation' do
-    it 'responds to the #play_pronunciation method' do
-      expect(@dictionary).to respond_to(:play_pronunciation).with(1).argument
-    end
-  end
 end

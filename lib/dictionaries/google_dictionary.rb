@@ -1,11 +1,11 @@
 require_relative 'dictionary'
 require_relative '../text_decoder'
-require_relative '../playable'
 require_relative '../google'
 class GoogleDictionary < Dictionary
-  include Playable
   include Google
   API_URL = 'http://translate.google.com/translate_a/t'
+
+  def provide_tts?; true; end
 
   def get_langs
     { 'af'  => 'Afrikaans',   'sq'  => 'Albanian',        'ar'  => 'Arabic',
@@ -30,9 +30,16 @@ class GoogleDictionary < Dictionary
       'zh-TW' => 'Chinese, (Traditional)','zh-CN'=> 'Chinese, (Simplified)' }
   end
 
-  def define(word, source, target, play = false)
+  def define(word, source, target, options = {})
     raise "Unknown language code '#{source}'" if !get_langs.include?(source)
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
+
+    if options[:cache_results]
+      entry = Translation.find_by(text: word, source: source,
+                                  target: target, service: 'google')
+      return entry.translation if !entry.nil?
+    end
+
     params = {client: 'p', text: word, sl: source, tl: target}
     response = RestClient.get(API_URL, params: params)
     json = JSON.parse(TextDecoder.decode(response.to_s, target))
@@ -55,11 +62,19 @@ class GoogleDictionary < Dictionary
         end
       end
     end
-    if play
-      file_name = get_pronunciation(word, source, target)
-      play_pronunciation(file_name)
+    if options[:tts]
+      file_name = StringUtil.tts_file_name(word, source, target, 'google')
+      if !File.exists?(file_name)
+        get_pronunciation(word, source, target, file_name)
+      end
     end
-    render result
+
+    translation = render result
+    if options[:cache_results]
+      Translation.create!(text: word, source: source, target: target,
+                          service: 'google', translation: translation)
+    end
+    translation
   end
 
   private

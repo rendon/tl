@@ -6,23 +6,20 @@ describe GoogleTranslator do
     @translator = GoogleTranslator.new
   end
 
-  describe '#get_langs' do
-    it 'responds to the #get_langs method' do
-      expect(@translator).to respond_to(:get_langs)
-    end
+  describe '#provide_tts?' do
+    it { expect(@translator).to respond_to(:provide_tts?) }
+    it { expect(@translator.provide_tts?).to be true }
+  end
 
-    it 'should contain "en" key' do
-      expect(@translator.get_langs).to include('en')
-    end
-    it 'should contain "es" key' do
-      expect(@translator.get_langs).to include('es')
-    end
+  describe '#get_langs' do
+    it { expect(@translator).to respond_to(:get_langs) }
+
+    it { expect(@translator.get_langs).to include('en') }
+    it { expect(@translator.get_langs).to include('es') }
   end
 
   describe '#translate' do
-    it 'responds to the #translate method' do
-      expect(@translator).to respond_to(:translate).with(3).arguments
-    end
+    it { expect(@translator).to respond_to(:translate).with(3).arguments }
 
     it 'should fail when source code is not supported' do
       expect {
@@ -60,15 +57,15 @@ describe GoogleTranslator do
       expect(@translator.translate(text, 'es', 'ja')).to include(result)
     end
 
-    it 'calls #play_pronunciation when the "play" argument is true' do
-      expect(@translator).to receive(:play_pronunciation)
-      @translator.translate('hi', 'en', 'es', true)
+    it 'downloads pronunciation the first time' do
+      expect(@translator).to receive(:get_pronunciation)
+      @translator.translate('book', 'en', 'es', tts: true, cache_results: true)
     end
-  end
 
-  describe '#play_pronunciation' do
-    it 'responds to the #play_pronunciation method' do
-      expect(@translator).to respond_to(:play_pronunciation).with(1).argument
+    it 'uses cached pronunciation' do
+      @translator.translate('book', 'en', 'es', tts: true, cache_results: true)
+      expect(@translator).not_to receive(:get_pronunciation)
+      @translator.translate('book', 'en', 'es', tts: true, cache_results: true)
     end
   end
 end

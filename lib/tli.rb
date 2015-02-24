@@ -13,12 +13,12 @@ class Tli
   }
 
   OPTIONS = {
-    :source       => :key_value,
-    :target       => :key_value,
-    :service      => :key_value,
-    :cache_results => :flag,
-    :play         => :flag,
-    :help         => :flag
+    :source         => :key_value,
+    :target         => :key_value,
+    :service        => :key_value,
+    :cache_results  => :flag,
+    :play           => :flag,
+    :help           => :flag
   }
 
   TRANSLATORS = {
@@ -29,16 +29,19 @@ class Tli
     'google'  => GoogleDictionary.new
   }
 
-  def initialize(readline = Readline)
+  def initialize(readline = Readline, stdin = $stdin, stdout = $stdout, stderr = $stderr)
       @readline = readline
+      @stdin = stdin
+      @stdout = stdout
+      @stderr = stderr
   end
 
-  def invoke(args, stdin = $stdin, stdout = $stdout, stderr = $stderr)
+  def invoke(args)
     length = args.length
     params = parse_options(args)
 
     if params[:help] == :on
-      stdout.puts help
+      @stdout.puts help
       return
     end
 
@@ -49,22 +52,31 @@ class Tli
     Application.cache_results = true if params[:cache_results] == :on
 
     if !params[:words].empty?
-      stdout.puts process_input(params)
+      process_input(params)
     else
       while buf = @readline.readline('> ', true)
         params[:words] = buf.split(/\s+/)
-        result = process_input(params)
-        stdout.puts result if !result.empty?
+        process_input(params)
       end
     end
   end
 
-  def translate(text, source, target, service, play = false)
-    TRANSLATORS[service].translate(text, source, target, play)
+  def translate(text, source, target, service, options = {})
+    result = TRANSLATORS[service].translate(text, source, target, options)
+    @stdout.puts result
+    if options[:tts] && TRANSLATORS[service].provide_tts?
+      file_name = StringUtil.tts_file_name(text, source, target, service)
+      Player.play(file_name)
+    end
   end
 
-  def define(word, source, target, service, play = false)
-    DICTIONARIES[service].define(word, source, target, play)
+  def define(word, source, target, service, options = {})
+    result = DICTIONARIES[service].define(word, source, target, options)
+    @stdout.puts result
+    if options[:tts] && DICTIONARIES[service].provide_tts?
+      file_name = StringUtil.tts_file_name(word, source, target, service)
+      Player.play(file_name)
+    end
   end
 
   private
@@ -95,40 +107,15 @@ class Tli
     end
 
     def process_input(params)
-      return '' if params[:words].empty?
       text = params[:words].join(' ')
-
-      # caching
-      if Application.cache_results
-        entry = Translation.find_by(text: text,
-                                    source: params[:source],
-                                    target: params[:target],
-                                    service: params[:service])
-        return entry.translation if !entry.nil?
-      end
-
-      result = ''
+      options = { tts: params[:play] == :on,
+                  cache_results: params[:cache_results] }
       if params[:words].length == 1
-        result = define(params[:words].join(' '),
-                        params[:source],
-                        params[:target],
-                        params[:service],
-                        params[:play] == :on)
+        define(params[:words].join(' '), params[:source],
+               params[:target], params[:service], options)
       elsif params[:words].length > 1
-        result = translate(params[:words].join(' '),
-                           params[:source],
-                           params[:target],
-                           params[:service],
-                           params[:play] == :on)
+        translate(params[:words].join(' '), params[:source],
+                  params[:target], params[:service], options)
       end
-
-      if Application.cache_results
-        Translation.create!(text: text,
-                            source: params[:source],
-                            target: params[:target],
-                            service: params[:service],
-                            translation: result)
-      end
-      result
     end
 end

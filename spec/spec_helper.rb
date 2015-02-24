@@ -1,15 +1,15 @@
-require 'simplecov'
+#require 'simplecov'
+#SimpleCov.start
+require 'coveralls'
+Coveralls.wear!
+
 require 'database_cleaner'
-SimpleCov.start
-#require 'coveralls'
-#Coveralls.wear!
 
 require 'tli'
 require 'translators/google_translator'
 require 'translators/translator'
 require 'dictionaries/dictionary'
 require 'dictionaries/google_dictionary'
-require 'playable'
 require 'player'
 require 'string_util'
 require 'translation'
@@ -17,6 +17,7 @@ require 'translation'
 RSpec.configure do |config|
 
   config.before(:suite) do
+    FileUtils.rm_rf(Dir.glob(Application.app_dir + '/pronunciations/*'))
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
@@ -26,5 +27,4 @@ RSpec.configure do |config|
       example.run
     end
   end
-
 end
