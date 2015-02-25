@@ -1,3 +1,3 @@
-Given /^I execute the program with \-\-info "(.*?)"$/ do |service|
-  run "tli --info #{service}"
+Given /^I execute the program with "(.*?)"$/ do |option|
+  run "tli #{option}"
 end

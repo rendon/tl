@@ -4,7 +4,7 @@ require_relative '../google'
 class GoogleDictionary < Dictionary
   include Google
   API_URL = 'http://translate.google.com/translate_a/t'
-
+  def self.name; 'Google Translate' end
   def provide_tts?; true; end
 
   def get_langs

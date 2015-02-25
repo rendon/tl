@@ -117,4 +117,12 @@ describe Tli do
       @tli.invoke(%w{--info google})
     end
   end
+
+  describe 'display supported services' do
+    it { expect(@tli).to respond_to(:list_services) }
+    it 'displays list of supported services' do
+      expect(@tli).to receive(:list_services)
+      @tli.invoke(%w{--lts})
+    end
+  end
 end

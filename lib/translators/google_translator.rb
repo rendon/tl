@@ -7,7 +7,7 @@ require_relative '../google'
 
 class GoogleTranslator < Translator
   include Google
-
+  def self.name; 'Google Translate' end
   def provide_tts?; true end
 
   def get_langs

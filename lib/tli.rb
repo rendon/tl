@@ -19,7 +19,8 @@ class Tli
     :info           => :key_value,
     :cache_results  => :flag,
     :play           => :flag,
-    :help           => :flag
+    :help           => :flag,
+    :lts            => :flag
   }
 
   SERVICES = {
@@ -47,6 +48,7 @@ class Tli
     params = read_config_file(params)
 
     return @stdout.puts help                    if params[:help] == true
+    return @stdout.puts list_services           if params[:lts] == true
     return @stdout.puts get_info(params[:info]) if !params[:info].empty?
 
     params[:source]  = DEFAULTS[:source]   if params[:source].empty?
@@ -134,5 +136,15 @@ class Tli
 
   def get_info(service)
     SERVICES[service].get_info
+  end
+
+  def list_services
+    list = "Available translation services\n\n"
+    list += "id\t\tName\n"
+    list += "--\t\t----\n"
+    SERVICES.each do |key, value|
+      list += "#{key}\t\t#{value.name}"
+    end
+    list
   end
 end
