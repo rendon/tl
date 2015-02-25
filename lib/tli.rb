@@ -100,6 +100,8 @@ class Tli
           else
             params[sym] = true
           end
+        else
+          raise "#{arg}: not a valid option"
         end
       else
         params[:words] << arg

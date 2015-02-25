@@ -125,4 +125,12 @@ describe Tli do
       @tli.invoke(%w{--lts})
     end
   end
+
+  describe 'deal with options' do
+    it 'refuses invalid options' do
+      expect {
+        @tli.invoke(%w{--source en --target es --book in my book})
+      }.to raise_error(StandardError, '--book: not a valid option')
+    end
+  end
 end
