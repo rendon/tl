@@ -108,4 +108,13 @@ describe Tli do
       @tli.invoke(%w{--target fr song})
     end
   end
+
+  describe 'service info' do
+    it { expect(@tli).to respond_to(:get_info) }
+
+    it 'displays google info' do
+      expect(@tli).to receive(:get_info).with('google')
+      @tli.invoke(%w{--info google})
+    end
+  end
 end

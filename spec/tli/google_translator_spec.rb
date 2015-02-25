@@ -68,4 +68,9 @@ describe GoogleTranslator do
       @translator.translate('book', 'en', 'es', tts: true, cache_results: true)
     end
   end
+
+  describe '#get_info' do
+    it { expect(GoogleTranslator).to respond_to(:get_info) }
+    it { expect(GoogleTranslator.get_info).not_to be_nil }
+  end
 end
