@@ -1,10 +1,10 @@
 require 'database_cleaner'
 require 'database_cleaner/cucumber'
 
-DatabaseCleaner.strategy = :truncation
+DatabaseCleaner.strategy = :transaction
 
 Before do
-  @aruba_timeout_seconds = 5
+  @aruba_timeout_seconds = 7
 end
 
 Around do |scenario, block|

@@ -5,7 +5,7 @@ class CreateTranslation < ActiveRecord::Migration
       t.string :source
       t.string :target
       t.string :service
-      t.string :translation
+      t.string :response
 
       t.timestamps null: true
     end

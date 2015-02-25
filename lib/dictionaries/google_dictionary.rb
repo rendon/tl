@@ -34,34 +34,6 @@ class GoogleDictionary < Dictionary
     raise "Unknown language code '#{source}'" if !get_langs.include?(source)
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
 
-    if options[:cache_results]
-      entry = Translation.find_by(text: word, source: source,
-                                  target: target, service: 'google')
-      return entry.translation if !entry.nil?
-    end
-
-    params = {client: 'p', text: word, sl: source, tl: target}
-    response = RestClient.get(API_URL, params: params)
-    json = JSON.parse(TextDecoder.decode(response.to_s, target))
-    result = []
-    if json.include?('dict')
-      json['dict'].each do |item|
-        definition = {:class => item['pos'], entries: []}
-        item['entry'].each do |e|
-          definition[:entries] << {word: e['word'], score: (e['score'] or 1e9)}
-        end
-        result << definition
-      end
-    elsif json.include?('sentences')
-      json['sentences'].each do |item|
-        if item.include?('trans')
-          definition = {:class => 'translation', entries: []}
-          definition[:entries] << {word: item['trans'], score: 0}
-          result << definition
-          break
-        end
-      end
-    end
     if options[:tts]
       file_name = StringUtil.tts_file_name(word, source, target, 'google')
       if !File.exists?(file_name)
@@ -69,17 +41,36 @@ class GoogleDictionary < Dictionary
       end
     end
 
-    translation = render result
-    if options[:cache_results]
-      Translation.create!(text: word, source: source, target: target,
-                          service: 'google', translation: translation)
-    end
-    translation
+    json = JSON.parse(get_data(word, source, target, options))
+    render extract_definitions(json)
   end
 
   private
+    def extract_definitions(json)
+        result = []
+        if json.include?('dict')
+          json['dict'].each do |item|
+            definition = {:class => item['pos'], entries: []}
+            item['entry'].each do |e|
+              definition[:entries] << {word: e['word'], score: (e['score'] or 1e9)}
+            end
+            result << definition
+          end
+        elsif json.include?('sentences')
+          json['sentences'].each do |item|
+            if item.include?('trans')
+              definition = {:class => 'translation', entries: []}
+              definition[:entries] << {word: item['trans'], score: 0}
+              result << definition
+              break
+            end
+          end
+        end
+        result
+    end
+
     def render(result)
-      output = ""
+      output = ''
       result.each do |entry|
         output << "#{entry[:class]}\n#{'-' * entry[:class].length}\n"
         entry[:entries].sort! {|x, y| x[:score] <=> y[:score]}

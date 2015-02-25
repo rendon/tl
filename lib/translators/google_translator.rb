@@ -37,36 +37,28 @@ class GoogleTranslator < Translator
     raise "Unknown language code '#{source}'" if !get_langs.include?(source)
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
 
-    if options[:cache_results]
-      entry = Translation.find_by(text: text, source: source,
-                                  target: target, service: 'google')
-      return entry.translation if !entry.nil?
-    end
-
-    params = {client: 'p', text: text, sl: source, tl: target}
-    response = RestClient.get(TEXT_API_URL, params: params)
-    json = JSON.parse(TextDecoder.decode(response.to_s, target))
-    translation = ''
-    if json.include?('sentences')
-      json['sentences'].each do |entry|
-        if entry.include?('trans')
-          translation = entry['trans']
-          break
-        end
-      end
-    end
     if options[:tts]
       file_name = StringUtil.tts_file_name(text, source, target, 'google')
       if !File.exists?(file_name)
         get_pronunciation(text, source, target, file_name)
       end
     end
-
-    if options[:cache_results]
-      Translation.create!(text: text, source: source, target: target,
-                          service: 'google', translation: translation)
-    end
-    translation
+    json = JSON.parse(get_data(text, source, target, options))
+    translation = extract_translation(json)
   end
+
+  private
+    def extract_translation(json)
+      translation = ''
+      if json.include?('sentences')
+        json['sentences'].each do |entry|
+          if entry.include?('trans')
+            translation = entry['trans']
+            break
+          end
+        end
+      end
+      translation
+    end
 end
 
