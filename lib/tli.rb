@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'readline'
 require_relative 'translators/google_translator'
 require_relative 'dictionaries/google_dictionary'
@@ -35,6 +36,8 @@ class Tli
     'google'  => GoogleDictionary.new
   }
 
+  attr_reader :stdin, :stdout, :stderr
+
   def initialize(readline = Readline, stdin = $stdin, stdout = $stdout, stderr = $stderr)
       @readline = readline
       @stdin = stdin
@@ -47,9 +50,9 @@ class Tli
     params = parse_options(args)
     params = read_config_file(params)
 
-    return @stdout.puts help                    if params[:help] == true
-    return @stdout.puts list_services           if params[:lts] == true
-    return @stdout.puts get_info(params[:info]) if !params[:info].empty?
+    return stdout.puts help                    if params[:help] == true
+    return stdout.puts list_services           if params[:lts] == true
+    return stdout.puts get_info(params[:info]) if !params[:info].empty?
 
     params[:source]  = DEFAULTS[:source]   if params[:source].empty?
     params[:target]  = DEFAULTS[:target]   if params[:target].empty?
@@ -67,19 +70,25 @@ class Tli
 
   def translate(text, source, target, service, options = {})
     result = TRANSLATORS[service].translate(text, source, target, options)
-    @stdout.puts result
     if options[:tts] && TRANSLATORS[service].provide_tts?
+      stdout.puts '♬'
+      stdout.puts result
       file_name = StringUtil.tts_file_name(text, source, target, service)
       Player.play(file_name)
+    else
+      stdout.puts result
     end
   end
 
   def define(word, source, target, service, options = {})
     result = DICTIONARIES[service].define(word, source, target, options)
-    @stdout.puts result
     if options[:tts] && DICTIONARIES[service].provide_tts?
+      stdout.puts '♬'
+      stdout.puts result
       file_name = StringUtil.tts_file_name(word, source, target, service)
       Player.play(file_name)
+    else
+      stdout.puts result
     end
   end
 
