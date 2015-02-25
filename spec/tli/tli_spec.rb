@@ -84,4 +84,28 @@ describe Tli do
       @tli.invoke(%w{--cache_results --source en --target es --service google book})
     end
   end
+
+  describe 'configuration file' do
+    it 'target and source from config file' do
+      allow(File).to receive(:read).with(Application.app_dir + '/tli.conf')
+      .and_return('{"settings":{"source":"es","target":"en","service":"google"}}')
+      expect(@tli).to receive(:define).with('fe', 'es', 'en', 'google', *any_args)
+      @tli.invoke(%w{fe})
+    end
+
+    it 'play from config file' do
+      allow(File).to receive(:read).with(Application.app_dir + '/tli.conf')
+      .and_return('{"settings":{"source":"en","target":"es","play":true}}')
+      expect(@tli).to receive(:define).with('admonition', 'en', 'es', 'google',
+                                            {tts: true, cache_results: false})
+      @tli.invoke(%w{admonition})
+    end
+
+    it 'command line options override config file settings' do
+      allow(File).to receive(:read).with(Application.app_dir + '/tli.conf')
+      .and_return('{"settings":{"source":"en","target":"es","service":"google"}}')
+      expect(@tli).to receive(:define).with('song', 'en', 'fr', 'google', *any_args)
+      @tli.invoke(%w{--target fr song})
+    end
+  end
 end

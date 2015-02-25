@@ -39,8 +39,9 @@ class Tli
   def invoke(args)
     length = args.length
     params = parse_options(args)
+    params = read_config_file(params)
 
-    if params[:help] == :on
+    if params[:help] == true
       @stdout.puts help
       return
     end
@@ -48,8 +49,6 @@ class Tli
     params[:source]  = DEFAULTS[:source]   if params[:source].empty?
     params[:target]  = DEFAULTS[:target]   if params[:target].empty?
     params[:service] = DEFAULTS[:service]  if params[:service].empty?
-
-    Application.cache_results = true if params[:cache_results] == :on
 
     if !params[:words].empty?
       process_input(params)
@@ -95,7 +94,7 @@ class Tli
               params[sym] = args[index+1]
               index += 1
             else
-              params[sym] = :on
+              params[sym] = true
             end
           end
         else
@@ -108,8 +107,8 @@ class Tli
 
     def process_input(params)
       text = params[:words].join(' ')
-      options = { tts: params[:play] == :on,
-                  cache_results: params[:cache_results] }
+      options = { tts: params[:play] == true,
+                  cache_results: params[:cache_results] == true }
       if params[:words].length == 1
         define(params[:words].join(' '), params[:source],
                params[:target], params[:service], options)
@@ -117,5 +116,17 @@ class Tli
         translate(params[:words].join(' '), params[:source],
                   params[:target], params[:service], options)
       end
+    end
+
+    def read_config_file(params)
+      if File.exists?(Application.app_dir + '/tli.conf')
+        config = JSON.parse(File.read(Application.app_dir + '/tli.conf'))
+        OPTIONS.each do |key, value|
+          if config['settings'][key.to_s] && params[key].empty?
+            params[key] = config['settings'][key.to_s]
+          end
+        end
+      end
+      params
     end
 end
