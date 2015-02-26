@@ -9,25 +9,21 @@ module Google
   end
 
   def get_translation(text, source, target)
-    params = {client: 'p', text: text, sl: source, tl: target}
-    response = RestClient.get(TEXT_API_URL, params: params)
-    TextDecoder.decode(response.to_s, target)
+    headers = {
+      params: { client: 'p', text: text, sl: source, tl: target },
+      user_agent: 'Mozilla/5.0'
+    }
+    RestClient.get(TEXT_API_URL, headers).to_s.force_encoding(Encoding::UTF_8)
   end
 
   def get_data(text, source, target, options = {})
       return get_translation(text, source, target) if !options[:cache_results]
 
-      entry = Translation.find_by(text: text,
-                                  source: source,
-                                  target: target,
-                                  service: 'google')
+      data = { text: text, source: source, target: target, service: 'google' }
+      entry = Translation.find_by(data)
       if entry.nil?
-          response = get_translation(text, source, target)
-          entry = Translation.create!(text: text,
-                                      source: source,
-                                      target: target,
-                                      service: 'google',
-                                      response: response)
+          data[:response] = get_translation(text, source, target)
+          entry = Translation.create(data)
       end
       entry.response
   end

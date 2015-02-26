@@ -1,5 +1,4 @@
 require_relative 'dictionary'
-require_relative '../text_decoder'
 require_relative '../google'
 class GoogleDictionary < Dictionary
   include Google
@@ -35,7 +34,7 @@ class GoogleDictionary < Dictionary
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
 
     if options[:tts]
-      file_name = StringUtil.tts_file_name(word, source, target, 'google')
+      file_name = StringUtil.tts_file_name(word, target, 'google')
       if !File.exists?(file_name)
         get_pronunciation(word, source, target, file_name)
       end

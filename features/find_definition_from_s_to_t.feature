@@ -19,7 +19,7 @@ Feature: Find definition of word from language S to T
       | fácil         | es      | en      | easy          |
       | gracias       | es      | ja      | どうも        | 
       | literally     | en      | fr      | littéralement |
-      | montaña       | es      | pt      | Montanha      |
+      | montaña       | es      | pt      | montanha      |
       | mujer         | es      | ru      | женщина       |
       | play          | en      | es      | jugar         |
 
@@ -37,6 +37,6 @@ Feature: Find definition of word from language S to T
       | fácil         | es      | en      | easy          |
       | gracias       | es      | ja      | どうも        | 
       | literally     | en      | fr      | littéralement |
-      | montaña       | es      | pt      | Montanha      |
+      | montaña       | es      | pt      | montanha      |
       | mujer         | es      | ru      | женщина       |
       | play          | en      | es      | jugar         |

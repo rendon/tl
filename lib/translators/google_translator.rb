@@ -1,6 +1,5 @@
 require 'rest_client'
 require_relative 'translator'
-require_relative '../text_decoder'
 require_relative '../player'
 require_relative '../string_util'
 require_relative '../google'
@@ -38,7 +37,7 @@ class GoogleTranslator < Translator
     raise "Unknown language code '#{target}'" if !get_langs.include?(target)
 
     if options[:tts]
-      file_name = StringUtil.tts_file_name(text, source, target, 'google')
+      file_name = StringUtil.tts_file_name(text, target, 'google')
       if !File.exists?(file_name)
         get_pronunciation(text, source, target, file_name)
       end

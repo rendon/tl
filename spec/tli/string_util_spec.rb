@@ -2,13 +2,12 @@ require 'spec_helper'
 
 describe StringUtil do
   describe '#translation_id' do
-    it 'responds to the #tts_file_name method' do
-      expect(StringUtil).to respond_to(:tts_file_name).with(4).argument
-    end
+    it { expect(StringUtil).to respond_to(:tts_file_name).with(3).argument }
+    it { expect(StringUtil).to respond_to(:tts_hash).with(3).argument }
 
     context 'unit tests' do
       it {
-        expect(StringUtil.tts_file_name('a book', 'en', 'es', 'google')) .to end_with '/pronunciations/bc62dc11793bc8fa94b755cf0a725d0ce96fb9b4.mp3'
+        expect(StringUtil.tts_file_name('a book', 'en', 'google')) .to end_with '/pronunciations/a4537bb884ba092961dc5442e8e43f176bcad812.mp3'
       }
     end
   end

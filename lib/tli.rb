@@ -64,7 +64,7 @@ class Tli
     result = TRANSLATORS[service].translate(text, source, target, options)
     @stdout.puts result
     if options[:tts] && TRANSLATORS[service].provide_tts?
-      file_name = StringUtil.tts_file_name(text, source, target, service)
+      file_name = StringUtil.tts_file_name(text, target, service)
       Player.play(file_name)
     end
   end
@@ -73,7 +73,7 @@ class Tli
     result = DICTIONARIES[service].define(word, source, target, options)
     @stdout.puts result
     if options[:tts] && DICTIONARIES[service].provide_tts?
-      file_name = StringUtil.tts_file_name(word, source, target, service)
+      file_name = StringUtil.tts_file_name(word, target, service)
       Player.play(file_name)
     end
   end

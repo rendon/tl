@@ -12,4 +12,6 @@ group :test do
   gem 'simplecov', '0.9.2'
   gem 'database_cleaner', '1.4.0'
   gem 'coveralls', require: false
+  gem 'webmock', '1.20.4'
+  gem 'sinatra', '1.4.5'
 end
