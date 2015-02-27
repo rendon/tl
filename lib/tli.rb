@@ -5,6 +5,7 @@ require_relative 'dictionaries/google_dictionary'
 require_relative 'help'
 require_relative 'translation'
 
+# Command Line Interface for the translator
 class Tli
   include Help
   DEFAULTS = {
@@ -14,14 +15,14 @@ class Tli
   }
 
   OPTIONS = {
-    :source         => :key_value,
-    :target         => :key_value,
-    :service        => :key_value,
-    :info           => :key_value,
-    :cache_results  => :flag,
-    :play           => :flag,
-    :help           => :flag,
-    :lts            => :flag
+    source:         :key_value,
+    target:         :key_value,
+    service:        :key_value,
+    info:           :key_value,
+    cache_results:  :flag,
+    play:           :flag,
+    help:           :flag,
+    lts:            :flag
   }
 
   SERVICES = {
@@ -38,25 +39,25 @@ class Tli
 
   attr_reader :stdin, :stdout, :stderr
 
-  def initialize(readline = Readline, stdin = $stdin, stdout = $stdout, stderr = $stderr)
-      @readline = readline
-      @stdin = stdin
-      @stdout = stdout
-      @stderr = stderr
+  def initialize(readline = Readline, stdin = $stdin,
+                 stdout = $stdout, stderr = $stderr)
+    @readline = readline
+    @stdin = stdin
+    @stdout = stdout
+    @stderr = stderr
   end
 
   def invoke(args)
-    length = args.length
     params = parse_options(args)
     params = read_config_file(params)
 
-    return stdout.puts help                    if params[:help] == true
-    return stdout.puts list_services           if params[:lts] == true
-    return stdout.puts get_info(params[:info]) if !params[:info].empty?
+    return stdout.puts help                 if params[:help] == true
+    return stdout.puts list_services        if params[:lts] == true
+    return stdout.puts info(params[:info])  unless params[:info].empty?
 
-    params[:source]  = DEFAULTS[:source]   if params[:source].empty?
-    params[:target]  = DEFAULTS[:target]   if params[:target].empty?
-    params[:service] = DEFAULTS[:service]  if params[:service].empty?
+    params[:source]  = DEFAULTS[:source]    if params[:source].empty?
+    params[:target]  = DEFAULTS[:target]    if params[:target].empty?
+    params[:service] = DEFAULTS[:service]   if params[:service].empty?
 
     if !params[:words].empty?
       process_input(params)
@@ -99,21 +100,20 @@ class Tli
     index = 0
     while index < length
       arg = args[index]
-      if arg.start_with?('--')
-        sym = arg[2..-1].to_sym
-        if OPTIONS.include?(sym)
-          if OPTIONS[sym] == :key_value
-            raise "#{arg} requires a value" if index + 1 >= length
-            params[sym] = args[index+1]
-            index += 1
-          else
-            params[sym] = true
-          end
-        else
-          raise "#{arg}: not a valid option"
-        end
-      else
+      unless arg.start_with?('--')
         params[:words] << arg
+        index += 1
+        next
+      end
+
+      sym = arg[2..-1].to_sym
+      fail "#{arg}: not a valid option" unless OPTIONS.include?(sym)
+      if OPTIONS[sym] == :key_value
+        fail "#{arg} requires a value" if index + 1 >= length
+        params[sym] = args[index + 1]
+        index += 1
+      else
+        params[sym] = true
       end
       index += 1
     end
@@ -121,9 +121,10 @@ class Tli
   end
 
   def process_input(params)
-    text = params[:words].join(' ')
-    options = { tts: params[:play] == true,
-                cache_results: params[:cache_results] == true }
+    options = {
+      tts: params[:play] == true,
+      cache_results: params[:cache_results] == true
+    }
     if params[:words].length == 1
       define(params[:words].join(' '), params[:source],
              params[:target], params[:service], options)
@@ -134,9 +135,9 @@ class Tli
   end
 
   def read_config_file(params)
-    if File.exists?(Application.app_dir + '/tli.conf')
+    if File.exist?(Application.app_dir + '/tli.conf')
       config = JSON.parse(File.read(Application.app_dir + '/tli.conf'))
-      OPTIONS.each do |key, value|
+      OPTIONS.each do |key, _|
         if config['settings'][key.to_s] && params[key].empty?
           params[key] = config['settings'][key.to_s]
         end
@@ -145,8 +146,8 @@ class Tli
     params
   end
 
-  def get_info(service)
-    SERVICES[service].get_info
+  def info(service)
+    SERVICES[service].info
   end
 
   def list_services

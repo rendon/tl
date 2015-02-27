@@ -1,12 +1,20 @@
 require_relative 'dictionary'
 require_relative '../google'
+
+# Class for the Google Dictionary (actually Translate)
 class GoogleDictionary < Dictionary
   include Google
   API_URL = 'http://translate.google.com/translate_a/t'
-  def self.name; 'Google Translate' end
-  def provide_tts?; true; end
 
-  def get_langs
+  def self.name
+    'Google Translate'
+  end
+
+  def provide_tts?
+    true
+  end
+
+  def langs
     { 'af'  => 'Afrikaans',   'sq'  => 'Albanian',        'ar'  => 'Arabic',
       'hy'  => 'Armenian',    'az'  => 'Azerbaijani',     'eu'  => 'Basque',
       'be'  => 'Belarusian',  'bg'  => 'Bulgarian',       'ca'  => 'Catalan',
@@ -26,18 +34,16 @@ class GoogleDictionary < Dictionary
       'ru'  => 'Russian',     'sr'  => 'Serbian',         'sk'  => 'Slovak',
       'es'  => 'Spanish',     'sw'  => 'Swahili',         'sv'  => 'Swedish',
       'tr'  => 'Turkish',     'uk'  => 'Ukrainian',       'ur'  => 'Urdu',
-      'zh-TW' => 'Chinese, (Traditional)','zh-CN'=> 'Chinese, (Simplified)' }
+      'zh-TW' => 'Chinese, (Traditional)', 'zh-CN' => 'Chinese, (Simplified)' }
   end
 
   def define(word, source, target, options = {})
-    raise "Unknown language code '#{source}'" if !get_langs.include?(source)
-    raise "Unknown language code '#{target}'" if !get_langs.include?(target)
+    fail "Unknown language code '#{source}'" unless langs.include?(source)
+    fail "Unknown language code '#{target}'" unless langs.include?(target)
 
     if options[:tts]
       file_name = StringUtil.tts_file_name(word, target, 'google')
-      if !File.exists?(file_name)
-        get_pronunciation(word, source, target, file_name)
-      end
+      get_pronunciation(word, source, file_name) unless File.exist?(file_name)
     end
 
     json = JSON.parse(get_data(word, source, target, options))
@@ -45,36 +51,38 @@ class GoogleDictionary < Dictionary
   end
 
   private
-    def extract_definitions(json)
-        result = []
-        if json.include?('dict')
-          json['dict'].each do |item|
-            definition = {:class => item['pos'], entries: []}
-            item['entry'].each do |e|
-              definition[:entries] << {word: e['word'], score: (e['score'] or 1e9)}
-            end
-            result << definition
-          end
-        elsif json.include?('sentences')
-          json['sentences'].each do |item|
-            if item.include?('trans')
-              definition = {:class => 'translation', entries: []}
-              definition[:entries] << {word: item['trans'], score: 0}
-              result << definition
-              break
-            end
-          end
-        end
-        result
-    end
 
-    def render(result)
-      output = ''
-      result.each do |entry|
-        output << "#{entry[:class]}\n#{'-' * entry[:class].length}\n"
-        entry[:entries].sort! {|x, y| x[:score] <=> y[:score]}
-        output << entry[:entries].map {|e| e[:word] }.join(', ') + "\n\n"
+  def extract_definitions(json)
+    result = []
+    if json.include?('dict')
+      json['dict'].each do |item|
+        definition = { class: item['pos'], entries: [] }
+        item['entry'].each do |e|
+          data = { word: e['word'], score: (e['score'] || 1e9) }
+          definition[:entries] << data
+        end
+        result << definition
       end
-      output
+    elsif json.include?('sentences')
+      json['sentences'].each do |item|
+        if item.include?('trans')
+          definition = { class: 'translation', entries: [] }
+          definition[:entries] << { word: item['trans'], score: 0 }
+          result << definition
+          break
+        end
+      end
     end
+    result
+  end
+
+  def render(result)
+    output = ''
+    result.each do |entry|
+      output << "#{entry[:class]}\n#{'-' * entry[:class].length}\n"
+      entry[:entries].sort! { |x, y| x[:score] <=> y[:score] }
+      output << entry[:entries].map { |e| e[:word] }.join(', ') + "\n\n"
+    end
+    output
+  end
 end

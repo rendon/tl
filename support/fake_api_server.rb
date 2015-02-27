@@ -9,7 +9,7 @@ set :port, 80
 
 get '/translate_a/t' do
   begin
-  json_response(200, params)
+    serve_response(200, params)
   rescue
     content_type :json
     status 500
@@ -27,17 +27,11 @@ end
 
 private
 
-def json_response(response_code, params)
+def serve_response(response_code, params)
   db_file = File.dirname(__FILE__) + '/../fixtures/translations.db'
   db = SQLite3::Database.open(db_file)
-  query = %{
-    SELECT response
-    FROM translations
-    WHERE text = ?     AND
-          source = ?   AND
-          target = ?   AND
-          service = ?
-  }
+  query = %(SELECT response FROM translations WHERE text = ? AND source = ?
+            AND target = ? AND service = ?)
   parameters = [params[:text], params[:sl], params[:tl], 'google']
   content = ''
   db.execute(query, parameters) do |row|

@@ -1,0 +1,38 @@
+Usage: tli [options] [text]
+
+--source        Specify the language code of the text to translate, e.g. en, es,
+                fr, ja, etc.
+
+--target        Specify the we want to translate to, e.g. en, es, fr, ja, etc.
+
+--service       Specify the ID of the service we want to use as a translation
+                service, e.g. google, cambridge, etc.
+
+--info          Get information of a particular translation service, e.g.,
+                "--info google"
+
+--cache_results Enable caching of translation and pronunciations locally.
+
+--play          Plays the pronunciation of a text in the target language
+                (if the translation service provide pronunciations).
+
+--lts           List translation services.
+
+--help          Displays information about the usage of tli (this text).
+
+
+Examples:
+
+Translate "song" from English to French
+
+  $ tli --source en --target fr song
+
+Translate and play the pronunciation of "Good bye" from English to Spanish:
+
+  $ tli --source en --target es --play Good bye
+
+Start the interactive version if you want to translate multiple words:
+
+  $ tli --source en --target es
+  > 
+

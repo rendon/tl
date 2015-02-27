@@ -1,7 +1,12 @@
+# Base class for translators
 class Translator
   def translate(text, source, target, options = {}); end
-  def get_langs; end
+
+  def langs; end
+
   def provide_tts?; end
-  def get_info; end
+
+  def info; end
+
   def self.name; end
 end

@@ -3,7 +3,7 @@ require 'sqlite3'
 TEXT_API_URL    = 'http://translate.google.com/translate_a/t'
 
 if ARGV.length != 4
-  STDERR.puts "Usage: ruby fetchtl.rb <source> <target> <service> <text>"
+  STDERR.puts 'Usage: ruby fetchtl.rb <source> <target> <service> <text>'
   exit(1)
 end
 
@@ -16,14 +16,8 @@ begin
   if service == 'google'
     db_file = File.dirname(__FILE__) + '/../fixtures/translations.db'
     db = SQLite3::Database.open(db_file)
-    query = %{
-        SELECT response
-        FROM translations
-        WHERE text = ?     AND
-              source = ?   AND
-              target = ?   AND
-              service = ?
-    }
+    query = %(SELECT response FROM translations WHERE text = ? AND source = ?
+              AND target = ? AND service = ?)
     parameters = [text, source, target, 'google']
     result = db.execute(query, parameters)
     if result.empty?
@@ -35,10 +29,11 @@ begin
       data = [nil, text, source, target, 'google',
               response.to_s.force_encoding(Encoding::UTF_8),
               Time.now.to_s, Time.now.to_s]
-      db.execute('INSERT INTO translations VALUES(?, ?, ?, ?, ?, ?, ?, ?)', data)
+      query = 'INSERT INTO translations VALUES(?, ?, ?, ?, ?, ?, ?, ?)'
+      db.execute(query, data)
     end
   end
-  puts "Done!"
+  puts 'Done!'
 rescue => e
   STDERR.puts e.message
 end

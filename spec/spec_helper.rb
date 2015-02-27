@@ -1,5 +1,5 @@
-#require 'simplecov'
-#SimpleCov.start
+# require 'simplecov'
+# SimpleCov.start
 require 'coveralls'
 Coveralls.wear!
 
@@ -15,7 +15,6 @@ require 'string_util'
 require 'translation'
 
 RSpec.configure do |config|
-
   config.before(:suite) do
     FileUtils.rm_rf(Dir.glob(Application.app_dir + '/pronunciations/*'))
     DatabaseCleaner.strategy = :transaction

@@ -1,6 +1,7 @@
 require 'digest/sha1'
 require_relative 'application'
 
+# String-related helper functions
 class StringUtil
   def self.tts_file_name(text, target, service)
     hash = StringUtil.tts_hash(text, target, service)

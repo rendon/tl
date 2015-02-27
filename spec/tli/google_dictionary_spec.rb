@@ -5,7 +5,7 @@ describe GoogleDictionary do
   before :each do
     @dictionary = GoogleDictionary.new
   end
-  
+
   describe '#name' do
     it { expect(GoogleDictionary).to respond_to(:name) }
     it { expect(GoogleDictionary.name).not_to be_nil   }
@@ -16,25 +16,21 @@ describe GoogleDictionary do
     it { expect(@dictionary.provide_tts?).to be true }
   end
 
-  describe "#get_langs" do
-    it { expect(@dictionary).to respond_to(:get_langs) }
-    it { expect(@dictionary.get_langs).to include('en') }
-    it { expect(@dictionary.get_langs).to include('es') }
+  describe '#langs' do
+    it { expect(@dictionary).to respond_to(:langs) }
+    it { expect(@dictionary.langs).to include('en') }
+    it { expect(@dictionary.langs).to include('es') }
   end
 
-  describe "#define" do
+  describe '#define' do
     it { expect(@dictionary).to respond_to(:define).with(3).arguments }
 
     it 'fails when source code is not supported' do
-      expect {
-        @dictionary.define('text', 'English', 'es')
-      }.to raise_error
+      expect { @dictionary.define('text', 'English', 'es') }.to raise_error
     end
 
     it 'fails when target code is not supported' do
-      expect {
-        @dictionary.define('text', 'en', 'Spanish')
-      }.to raise_error
+      expect { @dictionary.define('text', 'en', 'Spanish') }.to raise_error
     end
 
     it 'defines from Spanish to Russian' do
@@ -103,5 +99,4 @@ describe GoogleDictionary do
       expect(definition).to include('aloud')
     end
   end
-
 end
