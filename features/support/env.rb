@@ -5,7 +5,6 @@ Coveralls.wear!
 
 require_relative '../../lib/translation'
 require_relative '../../lib/application'
-require_relative '../../support/fake_google'
 
 Before do
   FileUtils.rm_rf(Dir.glob(Application.app_dir + '/pronunciations/*'))
