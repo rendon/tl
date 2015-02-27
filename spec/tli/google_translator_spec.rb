@@ -6,6 +6,11 @@ describe GoogleTranslator do
     @translator = GoogleTranslator.new
   end
 
+  describe '#name' do
+    it { expect(GoogleTranslator).to respond_to(:name) }
+    it { expect(GoogleTranslator.name).not_to be_nil   }
+  end
+
   describe '#provide_tts?' do
     it { expect(@translator).to respond_to(:provide_tts?) }
     it { expect(@translator.provide_tts?).to be true }
@@ -67,5 +72,10 @@ describe GoogleTranslator do
       expect(@translator).not_to receive(:get_pronunciation)
       @translator.translate('book', 'en', 'es', tts: true, cache_results: true)
     end
+  end
+
+  describe '#get_info' do
+    it { expect(GoogleTranslator).to respond_to(:get_info) }
+    it { expect(GoogleTranslator.get_info).not_to be_nil }
   end
 end

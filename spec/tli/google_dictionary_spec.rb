@@ -5,6 +5,11 @@ describe GoogleDictionary do
   before :each do
     @dictionary = GoogleDictionary.new
   end
+  
+  describe '#name' do
+    it { expect(GoogleDictionary).to respond_to(:name) }
+    it { expect(GoogleDictionary.name).not_to be_nil   }
+  end
 
   describe '#provide_tts?' do
     it { expect(@dictionary).to respond_to(:provide_tts?) }

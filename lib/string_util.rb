@@ -1,5 +1,5 @@
 require 'digest/sha1'
-require_relative 'string_util'
+require_relative 'application'
 
 class StringUtil
   def self.tts_file_name(text, target, service)

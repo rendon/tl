@@ -108,4 +108,55 @@ describe Tli do
       @tli.invoke(%w{--target fr song})
     end
   end
+
+  describe 'service info' do
+    it { expect(@tli).to respond_to(:get_info) }
+
+    it 'displays google info' do
+      expect(@tli).to receive(:get_info).with('google')
+      @tli.invoke(%w{--info google})
+    end
+  end
+
+  describe 'display supported services' do
+    it { expect(@tli).to respond_to(:list_services) }
+    it 'displays list of supported services' do
+      expect(@tli).to receive(:list_services)
+      @tli.invoke(%w{--lts})
+    end
+  end
+
+  describe 'deal with options' do
+    it 'refuses invalid options' do
+      expect {
+        @tli.invoke(%w{--source en --target es --book in my book})
+      }.to raise_error(StandardError, '--book: not a valid option')
+    end
+  end
+
+  describe 'play pronunciation' do
+    it 'play pronunciation of a word' do
+      expect(Player).to receive(:play)
+      @tli.invoke(%w{--play music})
+    end
+
+    it 'play pronunciation of a text' do
+      expect(Player).to receive(:play)
+      @tli.invoke(%w{--play music is lovely})
+    end
+  end
+
+  describe 'service info' do
+    it 'displays service info for google' do
+      expect(@fake_stdout).to receive(:puts).with(@tli.get_info('google'))
+      @tli.invoke(%w{--info google})
+    end
+  end
+
+  describe 'list translation services' do
+    it 'displays list of translation services' do
+      expect(@fake_stdout).to receive(:puts).with(@tli.list_services)
+      @tli.invoke(%w{--lts})
+    end
+  end
 end
