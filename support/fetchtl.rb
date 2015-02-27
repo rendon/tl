@@ -3,14 +3,14 @@ require 'sqlite3'
 TEXT_API_URL    = 'http://translate.google.com/translate_a/t'
 
 if ARGV.length != 4
-  STDERR.puts "Usage: ruby fetchtl.rb <text> <source> <target> <service>"
+  STDERR.puts "Usage: ruby fetchtl.rb <source> <target> <service> <text>"
   exit(1)
 end
 
-text    = ARGV[0]
-source  = ARGV[1]
-target  = ARGV[2]
-service = ARGV[3]
+source  = ARGV[0]
+target  = ARGV[1]
+service = ARGV[2]
+text    = ARGV[3]
 
 begin
   if service == 'google'
