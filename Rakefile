@@ -1,6 +1,6 @@
 require 'fileutils'
 
-task default: [:build]
+task default: [:test]
 
 desc 'Build tli gem.'
 task :build do
