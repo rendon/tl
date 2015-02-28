@@ -19,10 +19,10 @@ end
 
 get '/translate_tts' do
   hash = StringUtil.tts_hash(params[:q], params[:tl], 'google')
-  file_name = File.dirname(__FILE__) + "/../fixtures/pronunciations/#{hash}.mp3"
+  audio_file = File.dirname(__FILE__) + "/../fixtures/pronunciations/#{hash}.mp3"
   content_type 'audio/mpeg'
   status 200
-  File.open(file_name).read
+  File.open(audio_file).read
 end
 
 private

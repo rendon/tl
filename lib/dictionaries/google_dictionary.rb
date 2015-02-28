@@ -42,8 +42,8 @@ class GoogleDictionary < Dictionary
     fail "Unknown language code '#{target}'" unless langs.include?(target)
 
     if options[:tts]
-      file_name = StringUtil.tts_file_name(word, target, 'google')
-      get_pronunciation(word, source, file_name) unless File.exist?(file_name)
+      audio_file = StringUtil.tts_file_name(word, source, 'google')
+      get_pronunciation(word, source, audio_file) unless File.exist?(audio_file)
     end
 
     json = JSON.parse(get_data(word, source, target, options))

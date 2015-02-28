@@ -11,7 +11,8 @@ class Tli
   DEFAULTS = {
     service: 'google',
     source: 'en',
-    target: 'es'
+    target: 'es',
+    player: Application.player
   }
 
   OPTIONS = {
@@ -19,6 +20,7 @@ class Tli
     target:         :key_value,
     service:        :key_value,
     info:           :key_value,
+    player:         :key_value,
     cache_results:  :flag,
     play:           :flag,
     help:           :flag,
@@ -58,6 +60,7 @@ class Tli
     params[:source]  = DEFAULTS[:source]    if params[:source].empty?
     params[:target]  = DEFAULTS[:target]    if params[:target].empty?
     params[:service] = DEFAULTS[:service]   if params[:service].empty?
+    params[:player]  = DEFAULTS[:player]    if params[:player].empty?
 
     if !params[:words].empty?
       process_input(params)
@@ -69,13 +72,28 @@ class Tli
     end
   end
 
+  def process_input(params)
+    options = {
+      tts: params[:play] == true,
+      cache_results: params[:cache_results] == true,
+      player: params[:player]
+    }
+    if params[:words].length == 1
+      define(params[:words].join(' '), params[:source],
+             params[:target], params[:service], options)
+    elsif params[:words].length > 1
+      translate(params[:words].join(' '), params[:source],
+                params[:target], params[:service], options)
+    end
+  end
+
   def translate(text, source, target, service, options = {})
     result = TRANSLATORS[service].translate(text, source, target, options)
     if options[:tts] && TRANSLATORS[service].provide_tts?
       stdout.puts '♬'
       stdout.puts result
-      file_name = StringUtil.tts_file_name(text, target, service)
-      Player.play(file_name)
+      audio_file = StringUtil.tts_file_name(text, source, service)
+      Player.play(audio_file, options[:player])
     else
       stdout.puts result
     end
@@ -86,8 +104,8 @@ class Tli
     if options[:tts] && DICTIONARIES[service].provide_tts?
       stdout.puts '♬'
       stdout.puts result
-      file_name = StringUtil.tts_file_name(word, target, service)
-      Player.play(file_name)
+      audio_file = StringUtil.tts_file_name(word, source, service)
+      Player.play(audio_file, options[:player])
     else
       stdout.puts result
     end
@@ -118,20 +136,6 @@ class Tli
       index += 1
     end
     params
-  end
-
-  def process_input(params)
-    options = {
-      tts: params[:play] == true,
-      cache_results: params[:cache_results] == true
-    }
-    if params[:words].length == 1
-      define(params[:words].join(' '), params[:source],
-             params[:target], params[:service], options)
-    elsif params[:words].length > 1
-      translate(params[:words].join(' '), params[:source],
-                params[:target], params[:service], options)
-    end
   end
 
   def read_config_file(params)

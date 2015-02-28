@@ -11,10 +11,10 @@ target  = ARGV[0]
 service = ARGV[1]
 text    = ARGV[2]
 hash = StringUtil.tts_hash(text, target, service)
-file_name = File.dirname(__FILE__) + "/../fixtures/pronunciations/#{hash}.mp3"
+audio_file = File.dirname(__FILE__) + "/../fixtures/pronunciations/#{hash}.mp3"
 begin
-  unless File.exist?(file_name)
-    File.open(file_name, 'w') do |f|
+  unless File.exist?(audio_file)
+    File.open(audio_file, 'w') do |f|
       f.write(RestClient.get(SPEECH_API_URL, params: { tl: target, q: text }))
     end
   end

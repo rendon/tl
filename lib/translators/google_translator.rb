@@ -44,10 +44,8 @@ class GoogleTranslator < Translator
     fail "Unknown language code '#{target}'" unless langs.include?(target)
 
     if options[:tts]
-      file_name = StringUtil.tts_file_name(text, target, 'google')
-      unless File.exist?(file_name)
-        get_pronunciation(text, source, file_name)
-      end
+      audio_file = StringUtil.tts_file_name(text, source, 'google')
+      get_pronunciation(text, source, audio_file) unless File.exist?(audio_file)
     end
     json = JSON.parse(get_data(text, source, target, options))
     extract_translation(json)

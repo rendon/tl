@@ -91,26 +91,30 @@ describe Tli do
   describe 'configuration file' do
     it 'target and source from config file' do
       config = '{"settings":{"source":"es","target":"en","service":"google"}}'
-      allow(File).to receive(:read).with(Application.app_dir + '/tli.conf')
-        .and_return(config)
+      conf_file = Application.app_dir + '/tli.conf'
+      allow(File).to receive(:exist?).with(conf_file).and_return(true)
+      allow(File).to receive(:read).with(conf_file).and_return(config)
       expect(@tli).to receive(:define).with('fe', 'es', 'en',
-                                            'google', *any_args)
+                                            'google', any_args)
       @tli.invoke(%w(fe))
     end
 
     it 'play from config file' do
       config = '{"settings":{"source":"en","target":"es","play":true}}'
-      allow(File).to receive(:read).with(Application.app_dir + '/tli.conf')
-        .and_return(config)
+      conf_file = Application.app_dir + '/tli.conf'
+      allow(File).to receive(:exist?).with(conf_file).and_return(true)
+      allow(File).to receive(:read).with(conf_file).and_return(config)
+
+      params = { tts: true, cache_results: false, player: 'touch' }
       expect(@tli).to receive(:define).with('admonition', 'en', 'es', 'google',
-                                            tts: true, cache_results: false)
+                                            params)
       @tli.invoke(%w(admonition))
     end
 
     it 'command line options override config file settings' do
       config = '{"settings":{"source":"en","target":"es","service":"google"}}'
-      allow(File).to receive(:read).with(Application.app_dir + '/tli.conf')
-        .and_return(config)
+      conf_file = Application.app_dir + '/tli.conf'
+      allow(File).to receive(:read).with(conf_file).and_return(config)
       expect(@tli).to receive(:define).with('song', 'en', 'fr',
                                             'google', *any_args)
       @tli.invoke(%w(--target fr song))
@@ -165,6 +169,25 @@ describe Tli do
     it 'displays list of translation services' do
       expect(@fake_stdout).to receive(:puts).with(@tli.list_services)
       @tli.invoke(%w(--lts))
+    end
+  end
+
+  describe 'use custom player' do
+    it 'uses user-specified player' do
+      audio_file = StringUtil.tts_file_name('light', 'en', 'google')
+      expect(Player).to receive(:play).with(audio_file, 'mplayer')
+      @tli.invoke(%w(--play --player mplayer light))
+    end
+
+    it 'user player from config file' do
+      config = '{"settings":{"play":true,"player":"play"}}'
+      conf_file = Application.app_dir + '/tli.conf'
+      audio_file = StringUtil.tts_file_name('light', 'en', 'google')
+      allow(File).to receive(:exist?).with(conf_file).and_return(true)
+      allow(File).to receive(:exist?).with(audio_file).and_return(true)
+      allow(File).to receive(:read).with(conf_file).and_return(config)
+      expect(Player).to receive(:play).with(audio_file, 'play')
+      @tli.invoke(%w(light))
     end
   end
 end

@@ -12,4 +12,8 @@ class Application
   def self.strings_dir
     @strings_dir ||= CONFIG[CONFIG[:env]][:strings_dir]
   end
+
+  def self.player
+    @player ||= CONFIG[CONFIG[:env]][:player]
+  end
 end
