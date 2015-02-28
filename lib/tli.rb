@@ -151,6 +151,7 @@ class Tli
   end
 
   def info(service)
+    fail 'Unknown service' unless SERVICES.include?(service)
     SERVICES[service].info
   end
 

@@ -128,6 +128,12 @@ describe Tli do
       expect(@tli).to receive(:info).with('google')
       @tli.invoke(%w(--info google))
     end
+
+    it 'handles unknown services' do
+      expect do
+        @tli.invoke(%w(--info *#!_?-))
+      end.to raise_error(StandardError, 'Unknown service')
+    end
   end
 
   describe 'display supported services' do
