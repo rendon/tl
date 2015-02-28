@@ -2,126 +2,157 @@ Translate it!
 =============
 [![Build Status](https://travis-ci.org/rendon/tli.svg?branch=master)](https://travis-ci.org/rendon/tli) [![Coverage Status](https://coveralls.io/repos/rendon/tli/badge.svg)](https://coveralls.io/r/rendon/tli)
 
-**tli** is a simple command line translator that uses the Google translation service to translate words, text and play the pronunciations. **tl** has two modes, interactive and one-time translation.
+**tli** is a  command line translator powered by Google Translate, so it's able to translate words, text and play the pronunciations. **tli** supports both, interactive and non-interactive modes.
 
 Launch the interactive version if you need to translate many words or if you need the translator very often.
 
-The one-time version is ideal for quick search or to translate words inside your editor (keep reading).
+The non-interactive version is ideal for quick search or to translate words inside your editor (keep reading).
 
-The supported languages (by Google) are the same available at [translate.google.com](https://translate.google.com/).
+Instalation
+===========
+The easiest way to use **tli** is installing the gem:
+
+    $ gem install tli
+
+Alternatively, clone this repo or download the zip file and execute the program like so:
+
+    $ cd /path/to/tli_src/
+    $ bin/tli
 
 Interactive version
 ===================
-Text snapshot 1:
-
-    >> brazen
-    adjective:
-    ----------
-    descarado, de latón, bronceado, bronco, lanzado
-
-    >> 
-
-Text snapshot 2:
-
-    >> A command line translator can be very useful to not to depend on the browser.
-    Un traductor de línea de comandos puede ser muy útil para no depender del navegador.
-    >> 
-
-Text snapshot 3: Use `-p` option, followed by a space, and then your text to play pronunciation.
-
-    >> -p says
-    dice
-    >> 
-
-One-time translation
-=======================
-The interactive version of the translator can be a little cumbersome if all you want is to translate a single word.
-
 Example 1:
 
-    $ tl alibi
-    verb:
-    -----
+    > brazen
+    adjective
+    ---------
+    descarado, bronceado, de latón, lanzado, bronco, zafado
+
+    >
+
+Example 2:
+
+    > A command line translator can be very useful to not to depend on the browser.
+    Un traductor de línea de comandos puede ser muy útil para no depender del navegador.
+    >
+
+Non-interactive version
+=======================
+The interactive version can be a bit cumbersome if all you want is to translate a single word or you want to pipe the output to another program.
+
+Example 3:
+
+    $ tli alibi
+    noun
+    ----
+    excusa, coartada
+
+    verb
+    ----
     presentar una coartada
 
-    noun:
-    -----
-    coartada, excusa
+Example 4: Play the pronunciation.
 
-
-Example 2: Retrieve and play the pronunciation.
-
-    $ tl -p clincher
-    noun:
-    -----
+    $ tli --play clincher
+    ♬
+    noun
+    ----
     punto clave
 
+Example 5: Specify the source and target language.
 
-Example 3: Specify the source and target language.
+    $ tli --source en --target fr water
+    noun
+    ----
+    marée, mer, eaux, eau
 
-    $ tl --source es --target fr agua
-    eau
- 
+    verb
+    ----
+    moirer, pleurer, larmoyer, irriguer, arroser, couper d'eau
 
-The text to translate is the concatenation of the parameters starting at the first non-option.
+    adjective
+    ---------
+    qui contient d'eau
+
+All parameters passed to **tli** are concatenated (except options and option values) and used as the text to translate.
+
+Tli application directory
+=========================
+**tli** uses the `~/.tli/` directory to store configurations, cached pronunciation and translations, etc.
 
 Configuration file
 ==================
-By default the source language is English (en) and the target language is Spanish (es). You can change this using the options `-s, --source` and `-t, --target` or alternatively write this values in the file `~/.tlrc` as follows:
+By default the source language is English (en) and the target language is Spanish (es). You can change this using the options `--source` and `--target`, or alternatively write this values in the file `~/.tli/tli.conf` as follows:
 
-    source_language = fr
-    target_language = en
+    {
+        "settings": {
+            "source": "en", 
+            "target": "fr",
+            "cache_results": true,
+            "player": "mplayer"
+        }
+    }
 
-Use `tl --langs` to get the list of supported languages (by Google) and their corresponding codes.
+Use `tli --info google` to get the list of supported languages Google and their corresponding codes.
+
+You can put in the configuration file any option that is supported by **tli**, I think you get the idea :).
 
 Use it in Vim
 =============
-I use `tl` in Vim to quickly translate words:
+I use `tli` in Vim to quickly translate words:
 
-    set keywordprg=tl
+    set keywordprg=tli
 
 Now press `K` to translate the word under the cursor or select your text in visual mode and press `K`.
 
-WARNING: gnome-keyring...
-=========================
-If a message like the following shows up every time you launch `tl`:
-
-    WARNING: gnome-keyring:: couldn't connect to: /home/rafa/.cache/keyring-oHS6Sb/pkcs11: No such file or directory
-
-Then put this line in your `~/.bashrc`:
-
-    unset GNOME_KEYRING_CONTROL
-
-Follow the next link for more info: [Why do I get this warning from Gnome keyring in Xubuntu?](http://askubuntu.com/questions/243210/why-do-i-get-this-warning-from-gnome-keyring-in-xubuntu).
-
-tl help
+tli help
 =======
+Type `tli --help` to obtain help, here an extract of it (it might be outdated).
 
-    -v, --version   Displays the current version of tl.
+    Usage: tli [options] [text]
 
-    -h, --help      Displays this text.
+    --version       Displays information about the current version.
 
-    -s, --source    Use it to indicate the source language using the
-                    language code. Use this option to override the source
-                    language in the config file (~/.tlrc), both in the
-                    interactive version as in the one-time translation.
+    --source        Specify the language code of the text to translate, e.g. en, es,
+                    fr, ja, etc.
 
-    -t, --target    Use it to indicate the target language using the
-                    language code. Use this option to override the source
-                    language in the config file (~/.tlrc), both in the
-                    interactive version as in the one-time translation.
+    --target        Specify the we want to translate to, e.g. en, es, fr, ja, etc.
 
-    -p, --play      Retrieve and play the pronunciation. If this option
-                    is passed in the interactive version ALL translations
-                    will play the pronunciation.
+    --service       Specify the ID of the service we want to use as a translation
+                    service, e.g. google, cambridge, etc.
 
-    -l, --langs     Display the list of supported languages and their
-                    codes. This language codes are what --source and
-                    --target receives.
+    --info          Get information of a particular translation service, e.g.,
+                    "--info google"
 
+    --cache_results Enable caching of translation and pronunciations locally.
+
+    --play          Plays the pronunciation of a text in the target language
+                    (if the translation service provide pronunciations).
+
+    --player        Specify the program that will be used to play the translation,
+                    by default `mplayer` is used.
+
+    --lts           List translation services.
+
+    --help          Displays information about the usage of tli (this text).
+
+
+    Examples:
+
+    Translate "song" from English to French
+
+      $ tli --source en --target fr song
+
+    Translate and play the pronunciation of "Good bye" from English to Spanish:
+
+      $ tli --source en --target es --play Good bye
+
+    Start the interactive version if you want to translate multiple words:
+
+      $ tli --source en --target es
+      > 
 
 Requirements
 ============
-- libreadline 6.2+, in Debian ``sudo apt-get install libreadline6-dev``
-- libcurl, in Debian ``sudo apt-get install libcurl3-gnutls``
-- mplayer, to play the translations (optional)
+- Ruby 1.9.3 or above
+- mplayer or any other media player for playing translations, ideally one that runs in the command line.

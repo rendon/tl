@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
                      dictionaries, etc. All in one.'
   s.authors       = ['Rafael Rendón Pablo']
   s.email         = 'rafaelrendonpablo@gmail.com'
-  s.files         = `git ls-files -- lib/*`.split("\n")
+  s.files         = `git ls-files -- lib/* assets/*`.split("\n")
   s.bindir        = 'bin'
   s.executables   = `git ls-files -- bin/*`.split("\n").map do |f|
     File.basename(f)

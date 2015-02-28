@@ -1,5 +1,7 @@
 Usage: tli [options] [text]
 
+--version       Displays information about the current version.
+
 --source        Specify the language code of the text to translate, e.g. en, es,
                 fr, ja, etc.
 
@@ -15,6 +17,9 @@ Usage: tli [options] [text]
 
 --play          Plays the pronunciation of a text in the target language
                 (if the translation service provide pronunciations).
+
+--player        Specify the program that will be used to play the translation,
+                by default `mplayer` is used.
 
 --lts           List translation services.
 
