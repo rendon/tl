@@ -1,4 +1,6 @@
 require 'fileutils'
+require 'active_record'
+require_relative 'lib/application'
 
 task default: [:test]
 
@@ -21,8 +23,16 @@ task :install do
   sh 'gem install `ls tli-*`'
 end
 
+desc 'Prepare test test environment'
+task :prepare_tests do
+    FileUtils.rm_rf(Application.app_dir)
+    FileUtils.mkdir_p(Application.app_dir + '/db')
+    FileUtils.mkdir_p(Application.app_dir + '/pronunciations')
+end
+
 desc 'Run test suite.'
 task :test do
+  Rake::Task[:prepare_tests].invoke
   sh 'bundle exec rspec'
   sh 'bundle exec cucumber'
 end

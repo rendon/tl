@@ -16,4 +16,8 @@ class Application
   def self.player
     @player ||= CONFIG[CONFIG[:env]][:player]
   end
+
+  def self.migrate_dir
+    @migrate_dir ||= CONFIG[CONFIG[:env]][:migrate_dir]
+  end
 end

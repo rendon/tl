@@ -6,7 +6,8 @@ Coveralls.wear!
 require_relative '../../lib/translation'
 require_relative '../../lib/application'
 
+FileUtils.rm_rf(Dir.glob(Application.app_dir + '/pronunciations/*'))
+
 Before do
-  FileUtils.rm_rf(Dir.glob(Application.app_dir + '/pronunciations/*'))
   @aruba_timeout_seconds = 10
 end

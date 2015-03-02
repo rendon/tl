@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'tli'
-  s.version       = '0.0.3'
+  s.version       = '0.0.4'
   s.date          = '2015-02-19'
   s.summary       = 'TransLate It! A command line tool to translate text from \
                      (and to) almost any language.'
@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
                      dictionaries, etc. All in one.'
   s.authors       = ['Rafael Rendón Pablo']
   s.email         = 'rafaelrendonpablo@gmail.com'
-  s.files         = `git ls-files -- lib/* assets/*`.split("\n")
+  s.files         = `git ls-files -- lib/* assets/* db/*`.split("\n")
   s.bindir        = 'bin'
   s.executables   = `git ls-files -- bin/*`.split("\n").map do |f|
     File.basename(f)

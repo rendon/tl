@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+require 'fileutils'
+require 'active_record'
+require_relative '../lib/application'
+FileUtils.mkdir_p(Application.app_dir + '/db')
+FileUtils.mkdir_p(Application.app_dir + '/pronunciations')
 require_relative '../lib/tli'
 begin
   Tli.new.invoke(ARGV)
