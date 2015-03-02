@@ -1,5 +1,4 @@
-Translate it!
-=============
+#Translate it!
 [![Build Status](https://travis-ci.org/rendon/tli.svg?branch=master)](https://travis-ci.org/rendon/tli) [![Coverage Status](https://coveralls.io/repos/rendon/tli/badge.svg)](https://coveralls.io/r/rendon/tli)
 
 **tli** is a  command line translator powered by Google Translate, so it's able to translate words, text and play the pronunciations. **tli** supports both, interactive and non-interactive modes.
@@ -8,8 +7,7 @@ Launch the interactive version if you need to translate many words or if you nee
 
 The non-interactive version is ideal for quick search or to translate words inside your editor (keep reading).
 
-Instalation
-===========
+#Instalation
 The easiest way to use **tli** is installing the gem:
 
     $ gem install tli
@@ -19,8 +17,7 @@ Alternatively, clone this repo or download the zip file and execute the program 
     $ cd /path/to/tli_src/
     $ bin/tli
 
-Interactive version
-===================
+#Interactive version
 Example 1:
 
     > brazen
@@ -36,8 +33,7 @@ Example 2:
     Un traductor de línea de comandos puede ser muy útil para no depender del navegador.
     >
 
-Non-interactive version
-=======================
+#Non-interactive version
 The interactive version can be a bit cumbersome if all you want is to translate a single word or you want to pipe the output to another program.
 
 Example 3:
@@ -76,12 +72,10 @@ Example 5: Specify the source and target language.
 
 All parameters passed to **tli** are concatenated (except options and option values) and used as the text to translate.
 
-Tli application directory
-=========================
+#Tli application directory
 **tli** uses the `~/.tli/` directory to store configurations, cached pronunciation and translations, etc.
 
-Configuration file
-==================
+#Configuration file
 By default the source language is English (en) and the target language is Spanish (es). You can change this using the options `--source` and `--target`, or alternatively write this values in the file `~/.tli/tli.conf` as follows:
 
     {
@@ -97,16 +91,14 @@ Use `tli --info google` to get the list of supported languages Google and their 
 
 You can put in the configuration file any option that is supported by **tli**, I think you get the idea :).
 
-Use it in Vim
-=============
+#Use it in Vim
 I use `tli` in Vim to quickly translate words:
 
     set keywordprg=tli
 
 Now press `K` to translate the word under the cursor or select your text in visual mode and press `K`.
 
-tli help
-=======
+#tli help
 Type `tli --help` to obtain help, here an extract of it (it might be outdated).
 
     Usage: tli [options] [text]
@@ -152,7 +144,9 @@ Type `tli --help` to obtain help, here an extract of it (it might be outdated).
       $ tli --source en --target es
       > 
 
-Requirements
-============
+#Requirements
 - Ruby 1.9.3 or above
 - mplayer or any other media player for playing translations, ideally one that runs in the command line.
+
+#Contributions
+Of course!, contributions are welcome. Check out the wiki of the project for help.
