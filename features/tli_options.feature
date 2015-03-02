@@ -18,3 +18,4 @@ Feature: Allow the user pass options to the program.
     Scenarios:
       | option            | output            |
       | --info google     | Google Translate  |
+      | --version         | tli version       |

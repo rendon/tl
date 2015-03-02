@@ -196,4 +196,11 @@ describe Tli do
       @tli.invoke(%w(light))
     end
   end
+
+  describe '--version' do
+    it 'displays version information' do
+      expect(@fake_stdout).to receive(:puts).with(@tli.version)
+      @tli.invoke(%w(--version))
+    end
+  end
 end

@@ -24,7 +24,8 @@ class Tli
     cache_results:  :flag,
     play:           :flag,
     help:           :flag,
-    lts:            :flag
+    lts:            :flag,
+    version:        :flag
   }
 
   SERVICES = {
@@ -55,6 +56,7 @@ class Tli
 
     return stdout.puts help                 if params[:help] == true
     return stdout.puts list_services        if params[:lts] == true
+    return stdout.puts version              if params[:version] == true
     return stdout.puts info(params[:info])  unless params[:info].empty?
 
     params[:source]  = DEFAULTS[:source]    if params[:source].empty?
@@ -163,5 +165,9 @@ class Tli
       list += "#{key}\t\t#{value.name}"
     end
     list
+  end
+
+  def version
+    'tli version 0.0.4'
   end
 end
