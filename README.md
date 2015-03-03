@@ -8,6 +8,8 @@ Launch the interactive version if you need to translate many words or if you nee
 The non-interactive version is ideal for quick search or to translate words inside your editor (keep reading).
 
 #Instalation
+First off, check out the requirements at the end of this document.
+
 The easiest way to use **tli** is installing the gem:
 
     $ gem install tli
@@ -146,6 +148,7 @@ Type `tli --help` to obtain help, here an extract of it (it might be outdated).
 
 #Requirements
 - Ruby 1.9.3 or above
+- `sqlite3` and `libsqlite3-dev`, in Debian or Ubuntu: `sudo apt-get install libsqlite3-dev`
 - mplayer or any other media player for playing translations, ideally one that runs in the command line.
 
 #Contributions
