@@ -152,6 +152,23 @@ describe Tli do
     end
   end
 
+  describe 'validate languages passed as parameters' do
+    context 'with valid languages' do
+      it 'should open the tli interactive mode' do
+        readline = double('readline')
+        @interactive_tli = Tli.new(readline)
+        expect(readline).to receive(:readline).with('> ', true)
+        @interactive_tli.invoke([])
+      end
+    end
+
+    context 'with invalid languages' do
+      it 'should raise error' do
+        expect { @tli.invoke(%w(--source en --target whatever)) }.to raise_error
+      end
+    end
+  end
+
   describe 'play pronunciation' do
     it 'play pronunciation of a word' do
       expect(Player).to receive(:play)
