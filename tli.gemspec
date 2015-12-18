@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
   end
   s.require_path  = 'lib'
   s.homepage      = 'https://github.com/rendon/tli'
-  s.license       = 'GNU GPL v3.0'
+  s.license       = 'GPL-3.0'
 end

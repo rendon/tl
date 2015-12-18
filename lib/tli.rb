@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'readline'
 require_relative 'translators/google_translator'
+require_relative 'translators/yandex_translator'
 require_relative 'dictionaries/google_dictionary'
 require_relative 'help'
 require_relative 'translation'
@@ -9,7 +10,7 @@ require_relative 'translation'
 class Tli
   include Help
   DEFAULTS = {
-    service: 'google',
+    service: 'yandex',
     source: 'en',
     target: 'es',
     player: Application.player
@@ -29,11 +30,13 @@ class Tli
   }
 
   SERVICES = {
-    'google' => GoogleTranslator
+    'google' => GoogleTranslator,
+    'yandex' => YandexTranslator
   }
 
   TRANSLATORS = {
-    'google'  => GoogleTranslator.new
+    'google'  => GoogleTranslator.new,
+    'yandex'  => YandexTranslator.new
   }
 
   DICTIONARIES = {
