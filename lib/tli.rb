@@ -3,6 +3,7 @@ require 'readline'
 require_relative 'translators/google_translator'
 require_relative 'translators/yandex_translator'
 require_relative 'dictionaries/google_dictionary'
+require_relative 'dictionaries/yandex_dictionary'
 require_relative 'help'
 require_relative 'translation'
 
@@ -40,7 +41,8 @@ class Tli
   }
 
   DICTIONARIES = {
-    'google'  => GoogleDictionary.new
+    'google'  => GoogleDictionary.new,
+    'yandex'  => YandexDictionary.new
   }
 
   attr_reader :stdin, :stdout, :stderr
