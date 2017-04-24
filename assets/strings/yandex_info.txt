@@ -1,0 +1,61 @@
+                          Yandex Translate
+
+Yandex.Translate (previously Yandex.Translation) is a web service provided by
+Yandex, intended for the translation of text or web pages into another
+language.
+
+The service uses a self-learning statistical machine translation,[3] developed
+by Yandex.[4] The system constructs the dictionary of correspondences based on
+the analysis of millions of translated texts. In order to translate the text,
+the computer first compares it to a database of words. The computer then
+compares the text to the base language models, trying to determine the meaning
+of an expression in the context of the text. (Wikipedia)
+
+You can use the Yandex.Translate API to translate text into the following languages:
+
+Language	Code	Language	Code
+Azerbaijan	az	Maltese	mt
+Albanian	sq	Macedonian	mk
+Amharic	am	Maori	mi
+English	en	Marathi	mr
+Arabic	ar	Mari	mhr
+Armenian	hy	Mongolian	mn
+Afrikaans	af	German	de
+Basque	eu	Nepali	ne
+Bashkir	ba	Norwegian	no
+Belarusian	be	Punjabi	pa
+Bengali	bn	Papiamento	pap
+Bulgarian	bg	Persian	fa
+Bosnian	bs	Polish	pl
+Welsh	cy	Portuguese	pt
+Hungarian	hu	Romanian	ro
+Vietnamese	vi	Russian	ru
+Haitian (Creole)	ht	Cebuano	ceb
+Galician	gl	Serbian	sr
+Dutch	nl	Sinhala	si
+Hill Mari	mrj	Slovakian	sk
+Greek	el	Slovenian	sl
+Georgian	ka	Swahili	sw
+Gujarati	gu	Sundanese	su
+Danish	da	Tajik	tg
+Hebrew	he	Thai	th
+Yiddish	yi	Tagalog	tl
+Indonesian	id	Tamil	ta
+Irish	ga	Tatar	tt
+Italian	it	Telugu	te
+Icelandic	is	Turkish	tr
+Spanish	es	Udmurt	udm
+Kazakh	kk	Uzbek	uz
+Kannada	kn	Ukrainian	uk
+Catalan	ca	Urdu	ur
+Kyrgyz	ky	Finnish	fi
+Chinese	zh	French	fr
+Korean	ko	Hindi	hi
+Xhosa	xh	Croatian	hr
+Latin	la	Czech	cs
+Latvian	lv	Swedish	sv
+Lithuanian	lt	Scottish	gd
+Luxembourgish	lb	Estonian	et
+Malagasy	mg	Esperanto	eo
+Malay	ms	Javanese	jv
+Malayalam	ml	Japanese	ja

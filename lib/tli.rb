@@ -95,6 +95,10 @@ class Tli
   end
 
   def translate(text, source, target, service, options = {})
+    if text.empty?
+      stdout.puts ''
+      return
+    end
     result = TRANSLATORS[service].translate(text, source, target, options)
     if options[:tts] && TRANSLATORS[service].provide_tts?
       stdout.puts '♬'

@@ -90,7 +90,7 @@ class YandexTranslator < Translator
     fail "Unknown language code '#{source}'" unless langs.include?(source)
     fail "Unknown language code '#{target}'" unless langs.include?(target)
 
-    key = ENV["YANDEX_TR_KEY"]
+    key = ENV["YANDEX_TRANSLATE_KEY"]
     text = URI.encode(text)
     resp = RestClient.get "https://translate.yandex.net/api/v1.5/tr.json/translate?key=#{key}&text=#{text}&lang=#{source}-#{target}"
     data = JSON.parse(resp)
@@ -98,6 +98,6 @@ class YandexTranslator < Translator
   end
 
   def self.info
-    File.open(Application.strings_dir + '/google_info.txt').read
+    File.open(Application.strings_dir + '/yandex_info.txt').read
   end
 end

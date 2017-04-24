@@ -181,7 +181,7 @@ class YandexDictionary < Dictionary
     if directions[source][target] == false
       fail "Unsuported direction #{source} -> #{target}"
     end
-    key = ENV["YANDEX_DI_KEY"]
+    key = ENV["YANDEX_DICTIONARY_KEY"]
     text = URI.encode(word)
     resp = RestClient.get "https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=#{key}&lang=#{source}-#{target}&text=#{text}"
     data = JSON.parse(resp)
