@@ -139,6 +139,12 @@ class Tli
       fail "#{arg}: not a valid option" unless OPTIONS.include?(sym)
       if OPTIONS[sym] == :key_value
         fail "#{arg} requires a value" if index + 1 >= length
+
+        if (sym == :source || sym == :target) &&
+           !TRANSLATORS['google'].langs.include?(args[index + 1])
+          fail 'Unknown language code'
+        end
+
         params[sym] = args[index + 1]
         index += 1
       else
